@@ -5,11 +5,11 @@ import pandas as pd
 import numpy as np
 from dask import threaded, delayed
 
-from .tokencontainer import TokenContainer
-from .invertedindex import InvertedIndex
-from .stringcontainer import StringContainer
-from .prober import Prober
-from .utils import get_str_cols, str2bytes
+from dmagellan.core.tokencontainer import TokenContainer
+from dmagellan.core.invertedindex import InvertedIndex
+from dmagellan.core.stringcontainer import StringContainer
+from dmagellan.core.prober import Prober
+from dmagellan.core.utils import get_str_cols, str2bytes
 
 
 
@@ -19,7 +19,7 @@ def preprocess_table(dataframe):
     projdf = dataframe[strcols]
     objsc = StringContainer()
 
-    for row in in projdf.itertuples(name=None):
+    for row in projdf.itertuples(name=None):
         colvalues = row[1:]
         strings = [colvalue.strip() for colvalue in colvalues if not pd.isnull(colvalue)]
         concat_row = ' '.join(strings)
@@ -32,6 +32,11 @@ def tokenize_strings(objsc, stopwords):
     objtc = TokenContainer()
     objtc.tokenize(objsc, stopwords)
     return objtc
+
+def build_inv_index(objtc):
+    inv_obj = InvertedIndex()
+    inv_obj.build_inv_index(objtc)
+    return inv_obj
 
 def probe(objtc, ids, objinvindex, yparam):
     objprobe = Prober()
@@ -47,7 +52,8 @@ def postprocess(result_list, ltable, rtable):
         rids.update(result.get_rids())
     lids = sorted(lids)
     rids = sorted(rids)
-    return (ltable.iloc[lids], rtable.iloc[rids])
+    #return (ltable.iloc[lids], rtable.iloc[rids])
+    return (lids, rids)
 #########################
 
 
@@ -64,9 +70,9 @@ def downsample_sm(ltable, rtable, size, y, stopwords=[]):
     rcat_strings = preprocess_table(rsample)
     rtokens = tokenize_strings(rcat_strings, stopwords)
 
-    probe_rslt = probe(rokens, range(len(rsample)), invindex, y)
+    probe_rslt = probe(rtokens, range(len(rsample)), invindex, y)
 
-    sampled_tbls = postprocess([probe_rslt])
+    sampled_tbls = postprocess([probe_rslt], ltable, rsample)
     
     return sampled_tbls
 #########################
@@ -91,7 +97,7 @@ def downsample_dk(ltable, rtable, size, y, stopwords=[], nchunks=1, scheduler=th
         probe_rslt = (delayed)(probe)(rtokens, idsplitted[i], invindex, y)
         probe_rslts.append(probe_rslt)
     
-    sampled_tbls = (delayed)(postprocess)(probe_rslts)
+    sampled_tbls = (delayed)(postprocess)(probe_rslts, ltable, rsample)
 
     if compute==True:
         return sampled_tbls.compute()
