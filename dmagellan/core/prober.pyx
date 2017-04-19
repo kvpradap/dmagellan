@@ -20,10 +20,11 @@ cdef class Prober:
         return self.rlocs.size()
 
     cdef vector[int] cget_llocs(self):
-        sort(self.llocs.begin(), self.rlocs.end())
+        sort(self.llocs.begin(), self.llocs.end())
         return self.llocs
 
     cdef vector[int] cget_rlocs(self):
+        sort(self.rlocs.begin(), self.rlocs.end())
         return self.rlocs
 
     cdef void cprobe(self, vector[vector[string]]& token_vector, \
@@ -49,7 +50,7 @@ cdef class Prober:
                 for cand in candidates:
                     cand_overlap[cand] += 1
             if cand_overlap.size():
-                rset.insert(i)
+                rset.insert(rid)
             for entry in cand_overlap:
                 tmp.push_back(entry)
             sort(tmp.begin(), tmp.end(), comp)

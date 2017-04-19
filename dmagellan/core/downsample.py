@@ -52,8 +52,8 @@ def postprocess(result_list, ltable, rtable):
         rids.update(result.get_rids())
     lids = sorted(lids)
     rids = sorted(rids)
-    #return (ltable.iloc[lids], rtable.iloc[rids])
-    return (lids, rids)
+    return (ltable.iloc[lids], rtable.iloc[rids])
+    # return (lids, rids)
 #########################
 
 
@@ -65,7 +65,7 @@ def downsample_sm(ltable, rtable, size, y, stopwords=[]):
     ltokens = tokenize_strings(lcat_strings, stopwords)
     invindex = build_inv_index(ltokens)
 
-    #rsample = rtable.sample(size, replace=False)
+    # rsample = rtable.sample(size, replace=False)
     rsample = rtable.head(size)
     rcat_strings = preprocess_table(rsample)
     rtokens = tokenize_strings(rcat_strings, stopwords)
@@ -84,8 +84,8 @@ def downsample_dk(ltable, rtable, size, y, stopwords=[], nchunks=1, scheduler=th
     ltokens = (delayed)(tokenize_strings)(lcat_strings, stopwords)
     invindex = (delayed)(build_inv_index)(ltokens)
 
-    #rsample = rtable.sample(size, replace=False)
-    rsample = rtable.head(size)
+    rsample = rtable.sample(size, replace=False)
+    # rsample = rtable.head(size)
     
     rsplitted = np.array_split(rsample, nchunks)
     idsplitted = np.array_split(range(size), nchunks)
@@ -100,12 +100,39 @@ def downsample_dk(ltable, rtable, size, y, stopwords=[], nchunks=1, scheduler=th
     sampled_tbls = (delayed)(postprocess)(probe_rslts, ltable, rsample)
 
     if compute==True:
-        return sampled_tbls.compute()
+        return sampled_tbls.compute(get=scheduler)
     else:
         return sampled_tbls
 #########################
-    
 
 
+#### dask  debug########### ####
+def downsample_dbg(ltable, rtable, size, y, stopwords=[], nchunks=1,
+                  scheduler=threaded.get, compute=True):
+    lcat_strings = (preprocess_table)(ltable)
+    ltokens = (tokenize_strings)(lcat_strings, stopwords)
+    invindex =(build_inv_index)(ltokens)
+
+    # rsample = rtable.sample(size, replace=False)
+    rsample = rtable.head(size)
+
+    rsplitted = np.array_split(rsample, nchunks)
+    idsplitted = np.array_split(range(size), nchunks)
+
+    probe_rslts = []
+    for i in range(nchunks):
+        rcat_strings = (preprocess_table)(rsplitted[i])
+        rtokens = (tokenize_strings)(rcat_strings, stopwords)
+        probe_rslt = (probe)(rtokens, idsplitted[i], invindex, y)
+        probe_rslts.append(probe_rslt)
+
+    sampled_tbls = (postprocess)(probe_rslts, ltable, rsample)
+
+    # if compute == True:
+    #     return sampled_tbls.compute(get=scheduler)
+    # else:
+    return sampled_tbls
+
+#########################
 
 

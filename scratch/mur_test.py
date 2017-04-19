@@ -16,8 +16,9 @@ def _get_stop_words():
 
 
 
-sys.path.append('/scratch/pradap/python-work/dmagellan')
-from dmagellan.core.downsample import downsample_sm
+# sys.path.append('/scratch/pradap/python-work/dmagellan')
+sys.path.append('/users/pradap/Documents/Research/Python-Package/scaling/dmagellan')
+from dmagellan.core.downsample import downsample_sm, downsample_dk, downsample_dbg
 
 
 stopwords = list(_get_stop_words())
@@ -27,9 +28,17 @@ stopwords.extend(['the', 'my', 'i', 'andre', 'from', 'a', 'of', 'the', 'version'
 A = em.load_dataset('person_table_A')
 B = em.load_dataset('person_table_B')
 
-res = downsample_sm(A, B, 3, 1, stopwords=stopwords)
+# res_sm = downsample_sm(A, B, 3, 1, stopwords=stopwords)
+#
+# print(res_sm[0])
+# print(res_sm[1])
+from dask.async import get_sync
 
-print(res[0])
-print(res[1])
+res_dk = downsample_dk(A, B, 3, 1, stopwords=stopwords, nchunks=3)
+print(res_dk[0])
+print(res_dk[1])
+
+
+
 
 
