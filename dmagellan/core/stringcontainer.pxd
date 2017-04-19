@@ -1,5 +1,6 @@
-from libcpp.string cimport basestring
+from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 cdef class StringContainer:
-    cdef vector[string] sc
+    cdef vector[string] box
+    cdef int csize(self)
