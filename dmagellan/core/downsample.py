@@ -1,12 +1,14 @@
-from .stringcontainer import StringContainer
-from .tokencontainer import TokenContainer
+import string
+import time
+
+import pandas as pd
+from dask import threaded, delayed
+
+from dmagellan.TEMP.tokencontainer import TokenContainer
 from .invertedindex import InvertedIndex
 from .prober import Prober
+from .stringcontainer import StringContainer
 from .utils import get_str_cols, str2bytes
-import string
-from dask import threaded, delayed
-import pandas as pd
-import time
 
 
 def downsample(ltable, rtable, sample_size, y_param, stopwords=[], n_lchunks=1,

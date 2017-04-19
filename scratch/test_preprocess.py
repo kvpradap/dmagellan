@@ -1,9 +1,8 @@
 import sys
 sys.path.append('/Users/pradap/Documents/Research/Python-Package/scaling/dmagellan')
-from dmagellan.core.stringcontainer import StringContainer
+from dmagellan.TEMP.stringcontainer import StringContainer
 import string
 
-import time
 
 def get_str_cols(dataframe):
     return dataframe.columns[dataframe.dtypes == 'object']

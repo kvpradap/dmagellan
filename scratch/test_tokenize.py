@@ -1,9 +1,8 @@
 import sys
 sys.path.append('/Users/pradap/Documents/Research/Python-Package/scaling/dmagellan')
 from test_preprocess import preprocess_table
-from dmagellan.core.tokencontainer import TokenContainer
-from dmagellan.core.stringcontainer import StringContainer
-from dmagellan.core.invertedindex import InvertedIndex
+from dmagellan.TEMP.tokencontainer import TokenContainer
+from dmagellan.TEMP.invertedindex import InvertedIndex
 
 
 def tokenize_strings(concat_strings, stopwords):

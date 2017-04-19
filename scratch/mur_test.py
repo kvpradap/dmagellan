@@ -1,16 +1,16 @@
-import pandas as pd
-from dask import threaded, delayed
+import string
 import sys
 import time
-import string
 
+import pandas as pd
+from dask import threaded, delayed
 
 sys.path.append('/Users/pradap/Documents/Research/Python-Package/scaling/dmagellan/')
 
-from dmagellan.core.stringcontainer import StringContainer
-from dmagellan.core.tokencontainer import TokenContainer
-from dmagellan.core.invertedindex import InvertedIndex
-from dmagellan.core.prober import Prober
+from dmagellan.TEMP.stringcontainer import StringContainer
+from dmagellan.TEMP.tokencontainer import TokenContainer
+from dmagellan.TEMP.invertedindex import InvertedIndex
+from dmagellan.TEMP.prober import Prober
 
 def get_str_cols(dataframe):
     return dataframe.columns[dataframe.dtypes == 'object']
@@ -109,5 +109,7 @@ B = pd.read_csv('songs.csv')
 res = downsample(A, B, 10000, 1, ret_delayed=True)
 
 from dask.diagnostics import ProgressBar
+
+#client = Client()
 with ProgressBar():
     values = res.compute(get=threaded.get)

@@ -101,26 +101,25 @@ cdef class Prober:
             uid = p_id_tokens.first
             tokens = p_id_tokens.second
             for j in range(tokens.size()):
-                with gil:
-                    candidates = index._get_values(tokens[j])
+                candidates = index._get_values(tokens[j])
                 for cand in candidates:
                     candidate_overlap[cand] += 1
             for entry in candidate_overlap:
                 to_sort.push_back(entry)
-            sort(to_sort.begin(), to_sort.end(), comp)
+            #sort(to_sort.begin(), to_sort.end(), comp)
             k = 0
             for entry in to_sort:
-                sample_ltable_indices.insert(entry.first)
-                k += 1
                 if y == k:
                     break
+                sample_ltable_indices.insert(entry.first)
+                k += 1
 
             for k in sample_ltable_indices:
                 self.pair_indices.push_back(pair[int, int](to_sort[k].first, uid))
-            with gil:
-                candidate_overlap.clear()
-                sample_ltable_indices.clear()
-                to_sort.clear()
+            # with gil:
+            candidate_overlap.clear()
+            sample_ltable_indices.clear()
+            to_sort.clear()
 
 
             # n = tokens.size()
@@ -149,8 +148,8 @@ cdef class Prober:
 #             to_sort.clear()
 
     def probe(self, TokenContainer inp_token_list, InvertedIndex index, int y):
-        with nogil:
-            self._probe(inp_token_list, index, y)
+        # with nogil:
+        self._probe(inp_token_list, index, y)
     def get_ltable_indices(self):
         return self._get_ltable_indices()
     def get_rtable_indices(self):
