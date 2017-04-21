@@ -8,10 +8,11 @@ cdef extern from "string.h":
     char *strtok_r (char *inp_str, const char *delimiters, char **) nogil
 
 cdef class TokenContainer:
+    cdef vector[int] ids
     cdef vector[vector[string]] box
     cdef int csize(self)
     cdef void cinit(self, int n) nogil
-    cdef void cpush_back(self, vector[string] tokens)
+    cdef void cpush_back(self, int i, vector[string] tokens)
     cdef vector[string] cremove_stopwords(self, vector[string]& svec, omap[string, int]& stopwords) nogil
     cdef vector[string] ctokenize_wd(self, const string& inp) nogil
-    cdef void ctokenize(self, vector[string] &svec, omap[string, int]& stopwords) nogil
+    cdef void ctokenize(self, vector[int]&, vector[string] &svec, omap[string, int]& stopwords) nogil

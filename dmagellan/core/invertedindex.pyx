@@ -8,19 +8,25 @@ cdef class InvertedIndex:
         else:
             return tmp
     
-    cdef void cbuild_inv_index(self, vector[vector[string]]& token_vector):
+    cdef void cbuild_inv_index(self, vector[int]& ids, vector[vector[string]]& token_vector):
         cdef int n = token_vector.size()
-        cdef int i, j, m
+        cdef int i, j, m, uid
         cdef vector[string] tokens
 
         for i in xrange(n):
             tokens = token_vector[i]
+            uid = ids[i]
             m = tokens.size()
             for j in xrange(m):
-                self.index[tokens[j]].push_back(i)
+                self.index[tokens[j]].push_back(uid)
     
-    def build_inv_index(self, TokenContainer objtc):
-        self.cbuild_inv_index(objtc.box)
+    def build_inv_index_ds(self, objtclist):
+        cdef TokenContainer objtc
+        for objtc in objtclist:
+            self.build_inv_index_for_tc(self, objtc)
+
+    def build_inv_index_for_tc(self, TokenContainer objtc):
+        self.cbuild_inv_index(objtc.ids, objtc.box)
 
     def values(self, token):
         return self.cvalues(token)

@@ -52,7 +52,7 @@ def postprocess(result_list, ltable, rtable):
         rids.update(result.get_rids())
     lids = sorted(lids)
     rids = sorted(rids)
-    return (ltable.iloc[lids], rtable.iloc[rids])
+    return (ltable.loc[lids], rtable.loc[rids])
     # return (lids, rids)
 #########################
 
@@ -73,20 +73,20 @@ def downsample_sm(ltable, rtable, size, y, stopwords=[]):
     probe_rslt = probe(rtokens, range(len(rsample)), invindex, y)
 
     sampled_tbls = postprocess([probe_rslt], ltable, rsample)
-    
+
     return sampled_tbls
 #########################
 
 #### dask ########### ####
 def downsample_dk(ltable, rtable, size, y, stopwords=[], nchunks=1, scheduler=threaded.get, compute=True):
-    
+
     lcat_strings = (delayed)(preprocess_table)(ltable)
     ltokens = (delayed)(tokenize_strings)(lcat_strings, stopwords)
     invindex = (delayed)(build_inv_index)(ltokens)
 
     rsample = rtable.sample(size, replace=False)
     # rsample = rtable.head(size)
-    
+
     rsplitted = np.array_split(rsample, nchunks)
     idsplitted = np.array_split(range(size), nchunks)
 
@@ -96,7 +96,7 @@ def downsample_dk(ltable, rtable, size, y, stopwords=[], nchunks=1, scheduler=th
         rtokens = (delayed)(tokenize_strings)(rcat_strings, stopwords)
         probe_rslt = (delayed)(probe)(rtokens, idsplitted[i], invindex, y)
         probe_rslts.append(probe_rslt)
-    
+
     sampled_tbls = (delayed)(postprocess)(probe_rslts, ltable, rsample)
 
     if compute==True:

@@ -27,8 +27,8 @@ cdef class Prober:
         sort(self.rlocs.begin(), self.rlocs.end())
         return self.rlocs
 
-    cdef void cprobe(self, vector[vector[string]]& token_vector, \
-            vector[int] ids, omap[string, vector[int]]& index,\
+    cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, \
+            omap[string, vector[int]]& index,\
             int yparam) nogil:
         cdef int m, n
         cdef int i, j, k
@@ -67,11 +67,9 @@ cdef class Prober:
         for i in rset:
             self.rlocs.push_back(i)
 
-    def probe(self, TokenContainer objtc, ids, InvertedIndex index, int yparam):
-        cdef vector[int] cids
-        cids = ids
+    def probe(self, TokenContainer objtc, InvertedIndex index, int yparam):
         with nogil:
-            self.cprobe(objtc.box, cids, index.index, yparam)
+            self.cprobe(objtc.ids, objtc.box, index.index, yparam)
 
     def get_lids(self):
         return self.cget_llocs()
