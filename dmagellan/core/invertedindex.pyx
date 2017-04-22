@@ -23,7 +23,7 @@ cdef class InvertedIndex:
     def build_inv_index_ds(self, objtclist):
         cdef TokenContainer objtc
         for objtc in objtclist:
-            self.build_inv_index_for_tc(self, objtc)
+            self.build_inv_index_for_tc(objtc)
 
     def build_inv_index_for_tc(self, TokenContainer objtc):
         self.cbuild_inv_index(objtc.ids, objtc.box)
