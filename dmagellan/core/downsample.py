@@ -1,45 +1,31 @@
 import string
-
-
 import pandas as pd
-import numpy as np
-from dask import threaded, delayed
 
-from dmagellan.core.tokencontainer import TokenContainer
-from dmagellan.core.invertedindex import InvertedIndex
+from dask import threaded, delayed
 from dmagellan.core.stringcontainer import StringContainer
-from dmagellan.core.prober import Prober
-from dmagellan.core.utils import get_str_cols, str2bytes
+from dmagellan.core.dsprober import DownSampleProber
+from dmagellan.core.utils import get_str_cols, str2bytes, sample, splitdf,  tokenize_strings, build_inv_index
 
 
 
 #### helper functions ####
-def preprocess_table(dataframe):
-    strcols = get_str_cols(dataframe)
+
+def preprocess_table(dataframe, idcol):
+    strcols = list(get_str_cols(dataframe))
+    strcols.append(idcol)
     projdf = dataframe[strcols]
     objsc = StringContainer()
-
-    for row in projdf.itertuples(name=None):
-        colvalues = row[1:]
+    for row in projdf.itertuples():
+        colvalues = row[1:-1]
+        uid = row[-1]
         strings = [colvalue.strip() for colvalue in colvalues if not pd.isnull(colvalue)]
-        concat_row = ' '.join(strings)
+        concat_row = str2bytes(' '.join(strings).lower())
         concat_row = concat_row.translate(None, string.punctuation)
-        objsc.push_back(str2bytes(concat_row))
+        objsc.push_back(uid, concat_row)
     return objsc
 
-def tokenize_strings(objsc, stopwords):
-    n = objsc.size()
-    objtc = TokenContainer()
-    objtc.tokenize(objsc, stopwords)
-    return objtc
-
-def build_inv_index(objtc):
-    inv_obj = InvertedIndex()
-    inv_obj.build_inv_index(objtc)
-    return inv_obj
-
 def probe(objtc, objinvindex, yparam):
-    objprobe = Prober()
+    objprobe = DownSampleProber()
     objprobe.probe(objtc, objinvindex, yparam)
     return objprobe
 
@@ -59,18 +45,19 @@ def postprocess(result_list, ltable, rtable):
 
 
 #### single machine ####
-def downsample_sm(ltable, rtable, size, y, stopwords=[]):
+def downsample_sm(ltable, rtable, lid, rid, size, y, stopwords=[]):
 
-    lcat_strings = preprocess_table(ltable)
+    lcat_strings = preprocess_table(ltable, lid)
     ltokens = tokenize_strings(lcat_strings, stopwords)
     invindex = build_inv_index([ltokens])
 
     # rsample = rtable.sample(size, replace=False)
-    rsample = rtable.head(size)
-    rcat_strings = preprocess_table(rsample)
+    # rsample = rtable.head(size)
+    rsample = sample(rtable, size)
+    rcat_strings = preprocess_table(rsample, rid)
     rtokens = tokenize_strings(rcat_strings, stopwords)
 
-    probe_rslt = probe(rtokens, range(len(rsample)), invindex, y)
+    probe_rslt = probe(rtokens, invindex, y)
 
     sampled_tbls = postprocess([probe_rslt], ltable, rsample)
 
@@ -78,24 +65,29 @@ def downsample_sm(ltable, rtable, size, y, stopwords=[]):
 #########################
 
 #### dask ########### ####
-def downsample_dk(ltable, rtable, size, y, stopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True):
+def downsample_dk(ltable, rtable, lid, rid, size, y, stopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True):
 
 
-    lcat_strings = (delayed)(preprocess_table)(ltable)
-    ltokens = (delayed)(tokenize_strings)(lcat_strings, stopwords)
+    ltokens = []
+    for i in range(nlchunks):
+        lcat_strings = (delayed)(preprocess_table)(ltable, lid)
+        tokens = (delayed)(tokenize_strings)(lcat_strings, stopwords)
+        ltokens.append(tokens)
+
     invindex = (delayed)(build_inv_index)(ltokens)
 
-    rsample = rtable.sample(size, replace=False)
+    #rsample = rtable.sample(size, replace=False)
     # rsample = rtable.head(size)
 
-    rsplitted = np.array_split(rsample, nchunks)
-    idsplitted = np.array_split(range(size), nchunks)
+    #rsplitted = np.array_split(rsample, nchunks)
 
+    rsample = delayed(sample)(rtable, size)
+    rsplitted = delayed(splitdf)(rsample, nrchunks)
     probe_rslts = []
-    for i in range(nchunks):
-        rcat_strings = (delayed)(preprocess_table)(rsplitted[i])
+    for i in range(nrchunks):
+        rcat_strings = (delayed)(preprocess_table)(rsplitted[i], rid)
         rtokens = (delayed)(tokenize_strings)(rcat_strings, stopwords)
-        probe_rslt = (delayed)(probe)(rtokens, idsplitted[i], invindex, y)
+        probe_rslt = (delayed)(probe)(rtokens, invindex, y)
         probe_rslts.append(probe_rslt)
 
     sampled_tbls = (delayed)(postprocess)(probe_rslts, ltable, rsample)
@@ -110,28 +102,25 @@ def downsample_dk(ltable, rtable, size, y, stopwords=[], nlchunks=1, nrchunks=1,
 #### dask  debug########### ####
 def downsample_dbg(ltable, rtable, size, y, stopwords=[], nchunks=1,
                   scheduler=threaded.get, compute=True):
-    lcat_strings = (preprocess_table)(ltable)
-    ltokens = (tokenize_strings)(lcat_strings, stopwords)
-    invindex =(build_inv_index)(ltokens)
+    ltokens = []
+    for i in range(nlchunks):
+        lcat_strings = preprocess_table(ltable)
+        tokens = tokenize_strings(lcat_strings, stopwords)
+        ltokens.append(tokens)
 
-    # rsample = rtable.sample(size, replace=False)
-    rsample = rtable.head(size)
+    invindex = build_inv_index(ltokens)
 
-    rsplitted = np.array_split(rsample, nchunks)
-    idsplitted = np.array_split(range(size), nchunks)
-
+    rsample = sample(rtable, size)
+    rsplitted = splitdf(rsample, nrchunks)
     probe_rslts = []
-    for i in range(nchunks):
-        rcat_strings = (preprocess_table)(rsplitted[i])
-        rtokens = (tokenize_strings)(rcat_strings, stopwords)
-        probe_rslt = (probe)(rtokens, idsplitted[i], invindex, y)
+    for i in range(nrchunks):
+        rcat_strings = preprocess_table(rsplitted[i])
+        rtokens = tokenize_strings(rcat_strings, stopwords)
+        probe_rslt = probe(rtokens, invindex, y)
         probe_rslts.append(probe_rslt)
 
-    sampled_tbls = (postprocess)(probe_rslts, ltable, rsample)
+    sampled_tbls = postprocess(probe_rslts, ltable, rsample)
 
-    # if compute == True:
-    #     return sampled_tbls.compute(get=scheduler)
-    # else:
     return sampled_tbls
 
 #########################

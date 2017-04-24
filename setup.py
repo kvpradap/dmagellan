@@ -76,7 +76,7 @@ if __name__ == "__main__":
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),
                                     
-            setuptools.Extension("dmagellan.core.prober", sources=["dmagellan/core/prober.pyx", "dmagellan/core/invertedindex.pyx", "dmagellan/core/tokencontainer.pyx"], language="c++",
+            setuptools.Extension("dmagellan.core.dsprober", sources=["dmagellan/core/dsprober.pyx", "dmagellan/core/invertedindex.pyx", "dmagellan/core/tokencontainer.pyx"], language="c++",
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),
 

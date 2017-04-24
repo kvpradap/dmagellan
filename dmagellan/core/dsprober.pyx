@@ -13,7 +13,7 @@ from .tokencontainer cimport TokenContainer
 cdef bool comp(const pair[int, int] l, const pair[int, int] r):
         return l.second > r.second
 
-cdef class Prober:
+cdef class DownSampleProber:
     cdef int clsize(self):
         return self.llocs.size()
     cdef int crsize(self):
