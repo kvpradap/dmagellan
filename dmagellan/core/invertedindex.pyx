@@ -20,7 +20,7 @@ cdef class InvertedIndex:
             for j in xrange(m):
                 self.index[tokens[j]].push_back(uid)
     
-    def build_inv_index_ds(self, objtclist):
+    def build_inv_index(self, objtclist):
         cdef TokenContainer objtc
         for objtc in objtclist:
             self.build_inv_index_for_tc(objtc)

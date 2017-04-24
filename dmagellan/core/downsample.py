@@ -38,9 +38,9 @@ def build_inv_index(objtc):
     inv_obj.build_inv_index(objtc)
     return inv_obj
 
-def probe(objtc, ids, objinvindex, yparam):
+def probe(objtc, objinvindex, yparam):
     objprobe = Prober()
-    objprobe.probe(objtc, ids, objinvindex, yparam)
+    objprobe.probe(objtc, objinvindex, yparam)
     return objprobe
 
 def postprocess(result_list, ltable, rtable):
@@ -63,7 +63,7 @@ def downsample_sm(ltable, rtable, size, y, stopwords=[]):
 
     lcat_strings = preprocess_table(ltable)
     ltokens = tokenize_strings(lcat_strings, stopwords)
-    invindex = build_inv_index(ltokens)
+    invindex = build_inv_index([ltokens])
 
     # rsample = rtable.sample(size, replace=False)
     rsample = rtable.head(size)
@@ -78,7 +78,8 @@ def downsample_sm(ltable, rtable, size, y, stopwords=[]):
 #########################
 
 #### dask ########### ####
-def downsample_dk(ltable, rtable, size, y, stopwords=[], nchunks=1, scheduler=threaded.get, compute=True):
+def downsample_dk(ltable, rtable, size, y, stopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True):
+
 
     lcat_strings = (delayed)(preprocess_table)(ltable)
     ltokens = (delayed)(tokenize_strings)(lcat_strings, stopwords)

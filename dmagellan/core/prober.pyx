@@ -11,7 +11,7 @@ from .invertedindex cimport InvertedIndex
 from .tokencontainer cimport TokenContainer
 
 cdef bool comp(const pair[int, int] l, const pair[int, int] r):
-        return l.second > r.second 
+        return l.second > r.second
 
 cdef class Prober:
     cdef int clsize(self):
@@ -29,7 +29,7 @@ cdef class Prober:
 
     cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, \
             omap[string, vector[int]]& index,\
-            int yparam) nogil:
+            int yparam):
         cdef int m, n
         cdef int i, j, k
         cdef vector[string] tokens
@@ -39,6 +39,7 @@ cdef class Prober:
         cdef pair[int, int] entry
         cdef vector[pair[int, int]] tmp
         cdef int rid
+        cdef int mx = 0
         n = token_vector.size()
 
         for i in xrange(n):
@@ -47,6 +48,10 @@ cdef class Prober:
             m = tokens.size()
             for j in xrange(m):
                 candidates = self.cvalues(index, tokens[j])
+                #if candidates.size() >  mx:
+                #    mx = candidates.size()
+                #    print(tokens[j])
+                #    print(mx)
                 for cand in candidates:
                     cand_overlap[cand] += 1
             if cand_overlap.size():
@@ -68,8 +73,8 @@ cdef class Prober:
             self.rlocs.push_back(i)
 
     def probe(self, TokenContainer objtc, InvertedIndex index, int yparam):
-        with nogil:
-            self.cprobe(objtc.ids, objtc.box, index.index, yparam)
+        #with nogil:
+        self.cprobe(objtc.ids, objtc.box, index.index, yparam)
 
     def get_lids(self):
         return self.cget_llocs()
@@ -84,7 +89,7 @@ cdef class Prober:
         self.rlocs = rlocs
 
     def __sizeof__(self):
-        x = self.llocs 
+        x = self.llocs
         y = self.rlocs
         return sys.getsizeof(x) + sys.getsizeof(y)
 

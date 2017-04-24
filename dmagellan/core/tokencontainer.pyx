@@ -73,8 +73,9 @@ cdef class TokenContainer:
         return (self.ids, self.box)
     
     def __setstate__(self, state):
-        self.ids = state.ids
-        self.box = state.box
+        ids, box = state
+        self.ids = ids
+        self.box = box
 
 
     def __sizeof__(self):
