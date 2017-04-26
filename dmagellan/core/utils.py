@@ -6,7 +6,6 @@ import pandas as pd
 from dmagellan.core.invertedindex import InvertedIndex
 from dmagellan.core.stringcontainer import StringContainer
 from dmagellan.core.tokencontainer import TokenContainer
-from dmagellan.core.whitespacetokenizer import WhiteSpaceTokenizer
 
 
 def get_str_cols(dataframe):
@@ -44,11 +43,10 @@ def preprocess_table(dataframe, idcol):
     return objsc
 
 
-def tokenize_strings_wsp(objsc, stopwords):
+def tokenize_strings(objsc, stopwords):
     n = objsc.size()
     objtc = TokenContainer()
-    objtok = WhiteSpaceTokenizer(stopwords)
-    objtc.tokenize(objsc, objtok)
+    objtc.tokenize(objsc, stopwords)
     return objtc
 
 
@@ -59,8 +57,7 @@ def build_inv_index(objtc):
 
 
 def sample(df, size):
-    return df.head(size)
-    #return df.sample(size, replace=False)
+    return df.sample(size, replace=False)
 
 
 def splitdf(df, nchunks):
@@ -79,38 +76,30 @@ def rename(df, cols):
 
 def add_attrs(candset, ltbl, rtbl, fk_ltable, fk_rtable, lkey, rkey,
               lout=None, rout=None, l_prefix='l_', r_prefix='r_'):
-    index = candset.index
+
     if lout != None:
         colnames = [l_prefix + c for c in lout]
         ldf = create_proj_df(ltbl, lkey, candset[fk_ltable], lout, colnames)
-
-
+        candset = pd.concat([candset, ldf], axis=1, ignore_index=True)
     if rout != None:
         colnames = [r_prefix + c for c in rout]
         rdf = create_proj_df(rtbl, rkey, candset[fk_rtable], rout, colnames)
-
-
-    if lout != None:
-        candset = pd.concat([candset, ldf], axis=1)
-    if rout != None:
-        candset = pd.concat([candset, rdf], axis=1)
-    candset.set_index(index, inplace=True, drop=True)
+        candset = pd.concat([candset, rdf], axis=1, ignore_index=True)
     return candset
 
 def create_proj_df(df, key, vals, attrs, colnames):
-    df = df.set_index(key, drop=False)
-    df = df.ix[vals, attrs]
-    df.reset_index(drop=True, inplace=True)
-    df.columns = colnames
-    return df
+    tmp = df[df[key].isin(vals)]
+    tmp = tmp[attrs]
+    tmp.columns = colnames
+    return tmp
 
 
 def concatdf(dfs):
-    res = pd.concat(dfs, ignore_index=True)
+    res = pd.concat(dfs, axis=1, ignore_index=True)
     return res
 
 def addid(df):
-    df.insert(0, '_id', range(len(df)))
+    df = df.insert(0, '_id', range(len(df)))
     return df
 # def map_partitions(x, func, *args, **kwargs):
 #    out = []

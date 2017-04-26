@@ -4,7 +4,7 @@ import pandas as pd
 from dask import threaded, delayed
 from dmagellan.core.stringcontainer import StringContainer
 from dmagellan.core.dsprober import DownSampleProber
-from dmagellan.core.utils import get_str_cols, str2bytes, sample, splitdf,  tokenize_strings, build_inv_index
+from dmagellan.core.utils import get_str_cols, str2bytes, sample, splitdf,  tokenize_strings_wsp, build_inv_index
 
 
 
@@ -48,14 +48,14 @@ def postprocess(result_list, ltable, rtable):
 def downsample_sm(ltable, rtable, lid, rid, size, y, stopwords=[]):
 
     lcat_strings = preprocess_table(ltable, lid)
-    ltokens = tokenize_strings(lcat_strings, stopwords)
+    ltokens = tokenize_strings_wsp(lcat_strings, stopwords)
     invindex = build_inv_index([ltokens])
 
     # rsample = rtable.sample(size, replace=False)
     # rsample = rtable.head(size)
     rsample = sample(rtable, size)
     rcat_strings = preprocess_table(rsample, rid)
-    rtokens = tokenize_strings(rcat_strings, stopwords)
+    rtokens = tokenize_strings_wsp(rcat_strings, stopwords)
 
     probe_rslt = probe(rtokens, invindex, y)
 
@@ -71,7 +71,7 @@ def downsample_dk(ltable, rtable, lid, rid, size, y, stopwords=[], nlchunks=1, n
     ltokens = []
     for i in range(nlchunks):
         lcat_strings = (delayed)(preprocess_table)(ltable, lid)
-        tokens = (delayed)(tokenize_strings)(lcat_strings, stopwords)
+        tokens = (delayed)(tokenize_strings_wsp)(lcat_strings, stopwords)
         ltokens.append(tokens)
 
     invindex = (delayed)(build_inv_index)(ltokens)
@@ -86,7 +86,7 @@ def downsample_dk(ltable, rtable, lid, rid, size, y, stopwords=[], nlchunks=1, n
     probe_rslts = []
     for i in range(nrchunks):
         rcat_strings = (delayed)(preprocess_table)(rsplitted[i], rid)
-        rtokens = (delayed)(tokenize_strings)(rcat_strings, stopwords)
+        rtokens = (delayed)(tokenize_strings_wsp)(rcat_strings, stopwords)
         probe_rslt = (delayed)(probe)(rtokens, invindex, y)
         probe_rslts.append(probe_rslt)
 
@@ -105,7 +105,7 @@ def downsample_dbg(ltable, rtable, size, y, stopwords=[], nchunks=1,
     ltokens = []
     for i in range(nlchunks):
         lcat_strings = preprocess_table(ltable)
-        tokens = tokenize_strings(lcat_strings, stopwords)
+        tokens = tokenize_strings_wsp(lcat_strings, stopwords)
         ltokens.append(tokens)
 
     invindex = build_inv_index(ltokens)
@@ -115,7 +115,7 @@ def downsample_dbg(ltable, rtable, size, y, stopwords=[], nchunks=1,
     probe_rslts = []
     for i in range(nrchunks):
         rcat_strings = preprocess_table(rsplitted[i])
-        rtokens = tokenize_strings(rcat_strings, stopwords)
+        rtokens = tokenize_strings_wsp(rcat_strings, stopwords)
         probe_rslt = probe(rtokens, invindex, y)
         probe_rslts.append(probe_rslt)
 
@@ -124,5 +124,3 @@ def downsample_dbg(ltable, rtable, size, y, stopwords=[], nchunks=1,
     return sampled_tbls
 
 #########################
-
-

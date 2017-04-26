@@ -69,13 +69,23 @@ if __name__ == "__main__":
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),
 
+            setuptools.Extension("dmagellan.core.tokenizer", sources=["dmagellan/core/tokenizer.pyx"], language="c++",
+                      extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
+                                    extra_link_args=['-fopenmp']),
+
+            setuptools.Extension("dmagellan.core.whitespacetokenizer", sources=["dmagellan/core/whitespacetokenizer.pyx"], language="c++",
+                      extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
+                                    extra_link_args=['-fopenmp']),
+
+
             setuptools.Extension("dmagellan.core.tokencontainer", sources=["dmagellan/core/tokencontainer.pyx", "dmagellan/core/stringcontainer.pyx"], language="c++",
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),
+                                    
             setuptools.Extension("dmagellan.core.invertedindex", sources=["dmagellan/core/invertedindex.pyx", "dmagellan/core/tokencontainer.pyx"], language="c++",
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),
-                                    
+
             setuptools.Extension("dmagellan.core.dsprober", sources=["dmagellan/core/dsprober.pyx", "dmagellan/core/invertedindex.pyx", "dmagellan/core/tokencontainer.pyx"], language="c++",
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),

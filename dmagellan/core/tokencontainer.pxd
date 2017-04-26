@@ -2,6 +2,8 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.map cimport map as omap
 from libcpp.set cimport set as oset
+from .tokenizer cimport Tokenizer
+
 
 
 cdef extern from "string.h":
@@ -13,6 +15,6 @@ cdef class TokenContainer:
     cdef int csize(self)
     cdef void cinit(self, int n) nogil
     cdef void cpush_back(self, int i, vector[string] tokens)
-    cdef vector[string] cremove_stopwords(self, vector[string]& svec, omap[string, int]& stopwords) nogil
-    cdef vector[string] ctokenize_wd(self, const string& inp) nogil
-    cdef void ctokenize(self, vector[int]&, vector[string] &svec, omap[string, int]& stopwords) nogil
+    # cdef vector[string] cremove_stopwords(self, vector[string]& svec, omap[string, int]& stopwords) nogil
+    # cdef vector[string] ctokenize_wd(self, const string& inp) nogil
+    cdef void ctokenize(self, vector[int]&, vector[string] &svec, Tokenizer obj) nogil
