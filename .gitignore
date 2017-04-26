@@ -84,3 +84,4 @@ garage/timing_test
 
 err
 *.csv
+*.tgz
