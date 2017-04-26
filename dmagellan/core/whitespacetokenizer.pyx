@@ -1,8 +1,9 @@
 import sys
 from .stringcontainer cimport StringContainer
 cdef class WhiteSpaceTokenizer(Tokenizer):
-    def __init__(self, stopwords):
+    def __init__(self, return_set, stopwords):
         cdef string word
+        self.return_set = return_set
         if len(stopwords):
             for word in stopwords:
                 self.stopwords[word] = 0
@@ -21,11 +22,17 @@ cdef class WhiteSpaceTokenizer(Tokenizer):
         cdef oset[string] stokens
         cdef vector[string] otokens
         cdef string token
-        while pch != NULL:
-            stokens.insert(string(pch))
-            pch = strtok_r(NULL, " \t\n", &ptr1)
-        for token in stokens:
-            otokens.push_back(token)
+        if self.return_set:
+          while pch != NULL:
+              stokens.insert(string(pch))
+              pch = strtok_r(NULL, " \t\n", &ptr1)
+          for token in stokens:
+              otokens.push_back(token)
+        else:
+          while pch != NULL:
+              otokens.push_back(string(pch))
+              pch = strtok_r(NULL, " \t\n", &ptr1)
+
         return otokens
     cdef vector[string] ctokenize(self, const string& istring) nogil:
         cdef vector[string] tokens = self.ctokenize_wd(istring)

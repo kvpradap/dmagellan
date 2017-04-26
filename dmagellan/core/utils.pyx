@@ -47,7 +47,7 @@ def preprocess_table(dataframe, idcol):
 def tokenize_strings_wsp(objsc, stopwords):
     n = objsc.size()
     objtc = TokenContainer()
-    objtok = WhiteSpaceTokenizer(stopwords)
+    objtok = WhiteSpaceTokenizer(True, stopwords)
     objtc.tokenize(objsc, objtok)
     return objtc
 
