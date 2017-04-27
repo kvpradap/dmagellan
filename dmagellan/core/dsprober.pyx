@@ -29,7 +29,7 @@ cdef class DownSampleProber:
 
     cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, \
             omap[string, vector[int]]& index,\
-            int yparam):
+            int yparam) nogil:
         cdef int m, n
         cdef int i, j, k
         cdef vector[string] tokens
@@ -40,6 +40,7 @@ cdef class DownSampleProber:
         cdef vector[pair[int, int]] tmp
         cdef int rid
         cdef int mx = 0
+        cdef int cand
         n = token_vector.size()
 
         for i in xrange(n):
@@ -73,8 +74,8 @@ cdef class DownSampleProber:
             self.rlocs.push_back(i)
 
     def probe(self, TokenContainer objtc, InvertedIndex index, int yparam):
-        #with nogil:
-        self.cprobe(objtc.ids, objtc.box, index.index, yparam)
+        with nogil:
+            self.cprobe(objtc.ids, objtc.box, index.index, yparam)
 
     def get_lids(self):
         return self.cget_llocs()
@@ -92,6 +93,3 @@ cdef class DownSampleProber:
         x = self.llocs
         y = self.rlocs
         return sys.getsizeof(x) + sys.getsizeof(y)
-
-        
-

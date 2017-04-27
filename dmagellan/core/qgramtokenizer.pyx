@@ -1,5 +1,5 @@
 cdef class QgramTokenizer(Tokenizer):
-  def __init__(self, int qval, bool padding, char prefix_pad, char suffix_pad, bool return_set):
+  def __init__(self, int qval=2, bool padding=True, char prefix_pad='#', char suffix_pad='$', bool return_set=False):
     self.qval = qval
     self.padding = padding
     self.prefix_pad = prefix_pad
@@ -23,3 +23,6 @@ cdef class QgramTokenizer(Tokenizer):
       for i in xrange(n):
         out_tokens.push_back(inp_str.substr(i, self.qval))
     return out_tokens
+
+  def tokenize(self, const string& istring):
+      return self.ctokenize(istring)

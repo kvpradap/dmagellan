@@ -12,3 +12,4 @@ cdef class WhiteSpaceTokenizer(Tokenizer):
     cdef bool return_set
     cdef vector[string] cremove_stopwords(self, vector[string]& svec) nogil
     cdef vector[string] ctokenize_wd(self, const string& inp) nogil
+    cdef vector[string] ctokenize(self, const string& istring) nogil

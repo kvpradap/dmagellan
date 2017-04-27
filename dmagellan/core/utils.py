@@ -9,6 +9,13 @@ from dmagellan.core.tokencontainer import TokenContainer
 from dmagellan.core.whitespacetokenizer import WhiteSpaceTokenizer
 
 
+def get_proj_cols(idcol, attr, out):
+    ocols = [idcol, attr]
+    if out != None:
+        out = [c for c in out if c not in ocols]
+    ocols.extend(out)
+    return ocols
+    
 def get_str_cols(dataframe):
     return dataframe.columns[dataframe.dtypes == 'object']
 
@@ -51,6 +58,10 @@ def tokenize_strings_wsp(objsc, stopwords):
     objtc.tokenize(objsc, objtok)
     return objtc
 
+def tokenize_strings(objsc, tokenizer):
+    objtc = tokencontainer()
+    objtc.tokenize(objsc, tokenizer)
+    return objtc
 
 def build_inv_index(objtc):
     inv_obj = InvertedIndex()
@@ -91,8 +102,10 @@ def add_attrs(candset, ltbl, rtbl, fk_ltable, fk_rtable, lkey, rkey,
 
 
     if lout != None:
+        ldf.set_index(index, inplace=True, drop=True)
         candset = pd.concat([candset, ldf], axis=1)
     if rout != None:
+        rdf.set_index(index, inplace=True, drop=True)
         candset = pd.concat([candset, rdf], axis=1)
     candset.set_index(index, inplace=True, drop=True)
     return candset

@@ -11,7 +11,7 @@ cdef class DownSampleProber:
     cdef vector[int] cget_rlocs(self)
     cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector,\
              omap[string, vector[int]]& index, \
-            int yparam) 
+            int yparam) nogil
 
 
     cdef inline vector[int] cvalues(self, omap[string, vector[int]]& index, \
@@ -21,9 +21,3 @@ cdef class DownSampleProber:
             return index[token]
         else:
             return tmp
-    
-
-
-
-
-

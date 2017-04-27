@@ -65,9 +65,9 @@ if __name__ == "__main__":
                      extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                    extra_link_args=['-fopenmp']),
 
-            setuptools.Extension("dmagellan.core.utils", sources=["dmagellan/core/utils.pyx"], language="c++",
-                      extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
-                                    extra_link_args=['-fopenmp']),
+            # setuptools.Extension("dmagellan.core.utils", sources=["dmagellan/core/utils.pyx"], language="c++",
+            #           extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
+            #                         extra_link_args=['-fopenmp']),
 
             setuptools.Extension("dmagellan.core.tokenizer", sources=["dmagellan/core/tokenizer.pyx"], language="c++",
                       extra_compile_args = ["-O3", "-ffast-math", "-march=native", "-fopenmp"],
