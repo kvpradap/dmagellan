@@ -1,10 +1,11 @@
-import sys
 import os
+import sys
+
 sys.path.append('/Users/pradap/Documents/Research/Python-Package/scaling/dmagellan')
 #sys.path.append('/scratch/pradap/python-work/dmagellan')
 #from test_preprocess import preprocess_table
 from dmagellan.core.downsample import *
-from dmagellan.core.utils import *
+from dmagellan.utils.py_utils.utils import *
 
 import pandas as pd
 import time

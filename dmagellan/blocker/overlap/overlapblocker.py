@@ -1,13 +1,15 @@
 import string
-import pandas as pd
 from functools import partial
 
+import pandas as pd
 from dask import threaded, delayed
 from dmagellan.core.stringcontainer import StringContainer
-from dmagellan.core.overlapprober import OverlapProber
-from dmagellan.core.tokenizer import Tokenizer
 
-from dmagellan.core.utils import str2bytes, splitdf, build_inv_index
+from dmagellan.blocker.overlap.overlapprober import OverlapProber
+from dmagellan.utils.py_utils.utils import str2bytes, splitdf, build_inv_index, \
+    get_proj_cols, \
+    projdf, tokenize_strings, add_attrs, concatdf, addid
+
 
 ##### helper functions ######
 def remove_stopwords(tokens, stopwords):
@@ -42,26 +44,34 @@ def preprocess_table(dataframe, overlap_attr, id_attr, stopwords=None):
 
 def probe(objtc, objinvindex, threshold):
     objprobe = OverlapProber()
-    objprobe.probe(objtc, objinvindex, (double) threshold)
+    objprobe.probe(objtc, objinvindex, float(threshold))
     return objprobe
 
 def compute_overlap(row, threshold):
-    return len(set(x[0]).intersection(x[1])) >= threshold
+    return len(set(row[0]).intersection(row[1])) >= threshold
 
 def block_table_chunks(ldf, rdf, l_key, r_key, l_attr, r_attr, tokenizer, threshold,  stopwords, l_out, r_out, l_prefix, r_prefix):
+    ldf = ldf[~ldf[l_attr].isnull()]
+    rdf = rdf[~rdf[r_attr].isnull()]    
     lstrings = preprocess_table(ldf, l_attr, l_key, stopwords)
-    invindex = build_inv_index(lstrings)
     ltokens = tokenize_strings(lstrings, tokenizer)
-    res = probe(ltokens, invindex, threshold)
+    invindex = build_inv_index([ltokens])
+
+    rstrings = preprocess_table(rdf, r_attr, r_key, stopwords)
+    rtokens = tokenize_strings(rstrings, tokenizer)
+    res = probe(rtokens, invindex, threshold)
     lcol, rcol = l_prefix + l_key, r_prefix + r_key
     res = pd.DataFrame(res.get_pairids(), columns=[lcol, rcol])
-    res = add_attrs(res, ldf, rdf, lcol, rcol, l_key, r_key, l_out, r_out,
+    if len(res):
+        res = add_attrs(res, ldf, rdf, lcol, rcol, l_key, r_key, l_out, r_out,
                     l_prefix, r_prefix)
     return res
 
-def block_candset_chunks(candset, ldf, rdf, fk_ltable, fk_rtable, l_key, r_key, l_attr, r_attr, tokenizer, stopwords):
+def block_candset_chunks(candset, ldf, rdf, fk_ltable, fk_rtable, l_key, r_key, l_attr, r_attr, tokenizer, threshold, stopwords):
     #ldf = ldf.dropna()
     #rdf = rdf.dropna()
+    ldf = ldf[~ldf[l_attr].isnull()]
+    rdf = rdf[~rdf[r_attr].isnull()]
     tmp = pd.DataFrame()
     l_prefix, r_prefix = '__blk_a_','__blk_b_'
     cdf = add_attrs(candset, ldf, rdf, fk_ltable, fk_rtable, l_key, r_key, [l_attr], [r_attr], l_prefix, r_prefix)
@@ -76,16 +86,17 @@ def block_candset_chunks(candset, ldf, rdf, fk_ltable, fk_rtable, l_key, r_key, 
     overlap_fn = partial(compute_overlap, threshold=threshold)
     tmp['x'] = x
     tmp['y'] = y
-    valid = tmp.map(overlap_fn)
-    res = candset[valid]
+    valid = tmp.apply(overlap_fn, raw=True, axis=1)
+    res = candset[valid.values]
     return res
 
-def block_tables_sm(A, B, l_key, r_key, l_attr, r_attr, tokenizer, threshold, l_out=None, r_out=None, l_prefix='l_', r_prefix='r_', nlchunks=1, nrchunks=1):
+def block_tables_sm(A, B, l_key, r_key, l_attr, r_attr, tokenizer, threshold, stopwords=None, l_out=None, r_out=None, l_prefix='l_', r_prefix='r_', nlchunks=1, nrchunks=1):
     lsplitted = splitdf(A, nlchunks)
     rsplitted = splitdf(B, nrchunks)
     l_projcols = get_proj_cols(l_key, l_attr, l_out)
     r_projcols = get_proj_cols(r_key, r_attr, r_out)
-
+    if stopwords == None:
+        stopwords = []
     results = []
     for i in xrange(nlchunks):
         # here what we project must include lout
@@ -94,20 +105,27 @@ def block_tables_sm(A, B, l_key, r_key, l_attr, r_attr, tokenizer, threshold, l_
         for j in xrange(nrchunks):
             # projcols = get_proj_cols(r_key, r_attr, r_out)
             rdf = projdf(rsplitted[j], r_projcols)
-            res = block_table_chunks(ldf, rdf, l_key, r_key, l_attr, r_attr, tokenizer, threshold, l_out, r_out,l_prefix, r_prefix)
-            results.append(res)
+            res = block_table_chunks(ldf, rdf, l_key, r_key, l_attr, r_attr, tokenizer, threshold, stopwords, l_out, r_out,l_prefix, r_prefix)
+            if len(res) > 0:
+                results.append(res)
     df = concatdf(results)
     df = addid(df)
     return df
 
-def block_candset_sm(candset, A, B, fk_ltable, fk_rtable, l_key, r_key, l_attr, r_attr, tokenizer, threshold, nchunks=1):
+def block_candset_sm(candset, A, B, fk_ltable, fk_rtable, l_key, r_key, l_attr, r_attr, tokenizer, threshold,
+                     stopwords=None, nchunks=1):
+
     candsplitted = splitdf(candset, nchunks)
+    if stopwords == None:
+        stopwords = []
     results = []
     ldf = projdf(A, [l_key, l_attr])
     rdf = projdf(B, [r_key, r_attr])
     for i in xrange(nchunks):
-        res = block_candset_chunks(candsplitted[i], ldf, rdf, fk_ltable, fk_rtable, l_key, r_key, l_attr, r_attr)
-        results.append(res)
+        res = block_candset_chunks(candsplitted[i], ldf, rdf, fk_ltable, fk_rtable, l_key, r_key, l_attr, r_attr,
+                                   tokenizer, threshold, stopwords=stopwords)
+        if len(res):
+            results.append(res)
     df = concatdf(results)
     return df
 

@@ -7,8 +7,8 @@ from libcpp.pair cimport pair
 from libcpp.vector cimport vector
 from libcpp.map cimport map as omap
 
-from .invertedindex cimport InvertedIndex
-from .tokencontainer cimport TokenContainer
+from dmagellan.utils.cy_utils.invertedindex cimport InvertedIndex
+from dmagellan.utils.cy_utils.tokencontainer cimport TokenContainer
 
 cdef bool comp(const pair[int, int] l, const pair[int, int] r):
         return l.second > r.second
@@ -27,9 +27,7 @@ cdef class DownSampleProber:
         sort(self.rlocs.begin(), self.rlocs.end())
         return self.rlocs
 
-    cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, \
-            omap[string, vector[int]]& index,\
-            int yparam) nogil:
+    cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, omap[string, vector[int]]& index, int yparam) nogil:
         cdef int m, n
         cdef int i, j, k
         cdef vector[string] tokens

@@ -2,7 +2,7 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.map cimport map as omap
 from libcpp.set cimport set as oset
-from .tokenizer cimport Tokenizer
+from dmagellan.tokenizer.tokenizer cimport Tokenizer
 
 
 

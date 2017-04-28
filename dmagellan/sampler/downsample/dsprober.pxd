@@ -9,9 +9,7 @@ cdef class DownSampleProber:
     cdef int crsize(self)
     cdef vector[int] cget_llocs(self)
     cdef vector[int] cget_rlocs(self)
-    cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector,\
-             omap[string, vector[int]]& index, \
-            int yparam) nogil
+    cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, omap[string, vector[int]]& index, int yparam) nogil
 
 
     cdef inline vector[int] cvalues(self, omap[string, vector[int]]& index, \

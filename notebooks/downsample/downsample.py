@@ -1,8 +1,8 @@
 import sys
 sys.path.append('/users/pradap/Documents/Research/Python-Package/scaling/dmagellan')
-from dmagellan.core.stringcontainer import StringContainer
-from dmagellan.core.tokencontainer import TokenContainer
-from dmagellan.core.invertedindex import InvertedIndex
+from dmagellan.utils.cy_utils.stringcontainer import StringContainer
+from dmagellan.utils.cy_utils.tokencontainer import TokenContainer
+from dmagellan.utils.cy_utils.invertedindex import InvertedIndex
 from dmagellan.core.prober import Prober
 from dmagellan.core.downsample import get_str_cols
 import pandas 
@@ -67,10 +67,8 @@ def postprocess(result_list, ltable, rtable, lid, rid):
         s_ltable = ltable.map_partitions(lambda x: x[x[lid].isin(locs)])
         s_rtable = rtable.map_partitions(lambda x: x[x[rid].isin(locs)])
         return (s_ltable, s_rtable)
-        
-    
 
-import os
+
 def get_stop_words(path):
     stop_words_set = set()
     with open(path, "rb") as stopwords_file:

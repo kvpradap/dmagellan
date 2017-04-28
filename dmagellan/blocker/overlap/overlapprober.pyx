@@ -2,8 +2,8 @@ import sys
 
 from libcpp.algorithm cimport sort
 
-from .invertedindex cimport InvertedIndex
-from .tokencontainer cimport TokenContainer
+from dmagellan.utils.cy_utils.invertedindex cimport InvertedIndex
+from dmagellan.utils.cy_utils.tokencontainer cimport TokenContainer
 
 cdef bool comp(const pair[int, int] l, const pair[int, int] r):
     return l.second > r.second
@@ -24,7 +24,7 @@ cdef class OverlapProber:
 
 
 
-    cdef cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, omap[string, vector[int]]& index, double threshold) nogil:
+    cdef void cprobe(self, vector[int]& ids, vector[vector[string]]& token_vector, omap[string, vector[int]]& index, double threshold) nogil:
         cdef int m, n
         cdef int i, j, k
         cdef vector[string] tokens
@@ -45,10 +45,10 @@ cdef class OverlapProber:
                     cand_overlap[cand] += 1
             for entry in cand_overlap:
                 if (ge_compare(<double>entry.second, threshold)):
-                    self.pair_ids.push_back(pair[int, int](entry.first, i))
+                    self.pair_ids.push_back(pair[int, int](entry.first, rid))
             cand_overlap.clear()
     def probe(self, TokenContainer objtc, InvertedIndex index, double threshold):
         with nogil:
-            self.cprobe(objtc.ids, objtc.box, index.index, threshold)
+            self.cprobe(objtc.ids, objtc.box, index.index, float(threshold))
     def get_pairids(self):
         return self.pair_ids

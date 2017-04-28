@@ -2,18 +2,18 @@ import string
 
 import numpy as np
 import pandas as pd
+from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 
-from dmagellan.core.invertedindex import InvertedIndex
-from dmagellan.core.stringcontainer import StringContainer
-from dmagellan.core.tokencontainer import TokenContainer
-from dmagellan.core.whitespacetokenizer import WhiteSpaceTokenizer
+from dmagellan.tokenizer.whitespacetokenizer import WhiteSpaceTokenizer
+from dmagellan.utils.cy_utils.invertedindex import InvertedIndex
+from dmagellan.utils.cy_utils.tokencontainer import TokenContainer
 
 
 def get_proj_cols(idcol, attr, out):
     ocols = [idcol, attr]
     if out != None:
         out = [c for c in out if c not in ocols]
-    ocols.extend(out)
+        ocols.extend(out)
     return ocols
     
 def get_str_cols(dataframe):
@@ -59,7 +59,7 @@ def tokenize_strings_wsp(objsc, stopwords):
     return objtc
 
 def tokenize_strings(objsc, tokenizer):
-    objtc = tokencontainer()
+    objtc = TokenContainer()
     objtc.tokenize(objsc, tokenizer)
     return objtc
 
@@ -93,11 +93,13 @@ def add_attrs(candset, ltbl, rtbl, fk_ltable, fk_rtable, lkey, rkey,
     index = candset.index
     if lout != None:
         colnames = [l_prefix + c for c in lout]
+        # ltbl = ltbl.set_index(index, drop=True)
         ldf = create_proj_df(ltbl, lkey, candset[fk_ltable], lout, colnames)
 
 
     if rout != None:
         colnames = [r_prefix + c for c in rout]
+        # ltbl = ltbl.set_index(index, drop=True)
         rdf = create_proj_df(rtbl, rkey, candset[fk_rtable], rout, colnames)
 
 
@@ -123,7 +125,8 @@ def concatdf(dfs):
     return res
 
 def addid(df):
-    df.insert(0, '_id', range(len(df)))
+    if len(df):
+        df.insert(0, '_id', range(len(df)))
     return df
 # def map_partitions(x, func, *args, **kwargs):
 #    out = []

@@ -1,11 +1,12 @@
 import string
+
 import pandas as pd
-
 from dask import threaded, delayed
-from dmagellan.core.stringcontainer import StringContainer
 from dmagellan.core.dsprober import DownSampleProber
-from dmagellan.core.utils import get_str_cols, str2bytes, sample, splitdf,  tokenize_strings_wsp, build_inv_index
 
+from dmagellan.utils.cy_utils.stringcontainer import StringContainer
+from dmagellan.utils.py_utils.utils import get_str_cols, str2bytes, sample, splitdf, \
+    tokenize_strings_wsp, build_inv_index
 
 
 #### helper functions ####

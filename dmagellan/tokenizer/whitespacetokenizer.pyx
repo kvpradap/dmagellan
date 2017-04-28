@@ -1,5 +1,4 @@
-import sys
-from .stringcontainer cimport StringContainer
+
 cdef class WhiteSpaceTokenizer(Tokenizer):
     def __init__(self, return_set=True, stopwords=[]):
         cdef string word
@@ -38,6 +37,6 @@ cdef class WhiteSpaceTokenizer(Tokenizer):
         cdef vector[string] tokens = self.ctokenize_wd(istring)
         tokens = self.cremove_stopwords(tokens)
         return tokens
-        
+
     def tokenize(self, const string& istring):
         return self.ctokenize(istring)

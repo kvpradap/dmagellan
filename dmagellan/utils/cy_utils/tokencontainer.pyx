@@ -1,6 +1,6 @@
 import sys
-from .stringcontainer cimport StringContainer
-from .tokenizer cimport Tokenizer
+from dmagellan.utils.cy_utils.stringcontainer cimport StringContainer
+from dmagellan.tokenizer.tokenizer cimport Tokenizer
 cdef class TokenContainer:
 
     cdef int csize(self):
