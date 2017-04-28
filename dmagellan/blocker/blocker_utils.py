@@ -1,4 +1,4 @@
-def get_attrs_to_project(key, block_attr, output_attrs):
+def get_attrs_to_project(key, block_attr, output_attrs=None):
     proj_attrs = [key, block_attr]
     if output_attrs is not None:
         if not isinstance(output_attrs, list):

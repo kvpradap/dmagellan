@@ -5,7 +5,7 @@ from dask import threaded, delayed
 from dmagellan.core.dsprober import DownSampleProber
 
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
-from dmagellan.utils.py_utils.utils import get_str_cols, str2bytes, sample, splitdf, \
+from dmagellan.utils.py_utils.utils import get_str_cols, str2bytes, sample, split_df, \
     tokenize_strings_wsp, build_inv_index
 
 
@@ -83,7 +83,7 @@ def downsample_dk(ltable, rtable, lid, rid, size, y, stopwords=[], nlchunks=1, n
     #rsplitted = np.array_split(rsample, nchunks)
 
     rsample = delayed(sample)(rtable, size)
-    rsplitted = delayed(splitdf)(rsample, nrchunks)
+    rsplitted = delayed(split_df)(rsample, nrchunks)
     probe_rslts = []
     for i in range(nrchunks):
         rcat_strings = (delayed)(preprocess_table)(rsplitted[i], rid)
@@ -112,7 +112,7 @@ def downsample_dbg(ltable, rtable, size, y, stopwords=[], nchunks=1,
     invindex = build_inv_index(ltokens)
 
     rsample = sample(rtable, size)
-    rsplitted = splitdf(rsample, nrchunks)
+    rsplitted = split_df(rsample, nrchunks)
     probe_rslts = []
     for i in range(nrchunks):
         rcat_strings = preprocess_table(rsplitted[i])
