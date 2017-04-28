@@ -2,14 +2,6 @@
 from dmagellan.utils.py_utils.utils import add_attrs, rename, projdf
 
 
-def get_attrs_to_project(key, block_attr, output_attrs):
-    proj_attrs = [key, block_attr]
-    if output_attrs != None:
-        output_attrs = [c for c in output_attrs if c not in output_attrs]
-        proj_attrs.extend(output_attrs)
-    return proj_attrs
-
-
 def block_table_part(ltable, rtable, l_key, r_key, l_block_attr, r_block_attr,
                      l_out_attrs, r_out_attrs, l_prefix,
                      r_prefix):

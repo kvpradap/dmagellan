@@ -1,16 +1,15 @@
 # coding=utf-8
 
-from dask import delayed, threaded, cache
-from dask.diagnostics import ProgressBar
+from dask import threaded
 from dask.cache import Cache
+from dask.diagnostics import ProgressBar
 
-from dmagellan.blocker.attrequivalence.attrequivutils import get_attrs_to_project, \
-    block_table_part, block_candset_part
+from dmagellan.blocker.blocker_utils import get_attrs_to_project
+from dmagellan.blocker.attrequivalence.attrequivutils import block_table_part
 from dmagellan.utils.py_utils.utils import splitdf, projdf, concatdf, addid
 
 
 class AttrEquivalenceBlocker():
-
     def block_tables(self, ltable, rtable, l_key, r_key, l_block_attr, r_block_attr,
                      l_output_attrs=None, r_output_attrs=None, l_output_prefix='l_',
                      r_output_prefix='r_', nltable_chunks=1, allow_missing=False,
@@ -31,8 +30,8 @@ class AttrEquivalenceBlocker():
             for j in xrange(nrtable_chunks):
                 rtbl = (projdf)(rtable_splitted[j], r_proj_attrs)
                 res = (block_table_part)(ltbl, rtbl, l_key, r_key, l_block_attr,
-                                       r_block_attr, l_output_attrs, r_output_attrs,
-                                                l_output_prefix, r_output_prefix)
+                                         r_block_attr, l_output_attrs, r_output_attrs,
+                                         l_output_prefix, r_output_prefix)
                 results.append(res)
         candset = (concatdf)(results)
         candset = (addid)(candset)
@@ -45,6 +44,5 @@ class AttrEquivalenceBlocker():
             else:
                 with cache:
                     candset = candset.compute(get=scheduler)
-
 
         return candset
