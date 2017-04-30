@@ -1,5 +1,10 @@
 def get_attrs_to_project(key, block_attr, output_attrs=None):
-    proj_attrs = [key, block_attr]
+    if not isinstance(block_attr, list):
+        proj_attrs = [key, block_attr]
+    else:
+        proj_attrs = [key]
+        proj_attrs.extend(block_attr)
+
     if output_attrs is not None:
         if not isinstance(output_attrs, list):
             output_attrs = [output_attrs]
