@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import pandas as pd
-from dask import threaded
+from dask import threaded, delayed
 
 from dmagellan.blocker.blocker_utils import get_attrs_to_project
 from dmagellan.utils.py_utils.utils import split_df, proj_df, add_attributes, concat_df, \
@@ -93,7 +93,7 @@ class BlackBoxBlocker:
 
             # # get rtuple, try dictionary first, then dataframe
             row_rkey = row[r_id_pos]
-            if row_lkey not in r_dict:
+            if row_rkey not in r_dict:
                 r_tuple = rtbl.ix[row_rkey]
                 r_dict[row_rkey] = r_tuple
             else:
@@ -110,26 +110,26 @@ class BlackBoxBlocker:
                      nltable_chunks=1, nrtable_chunks=1, scheduler=threaded.get,
                      num_workers=None, cache_size=1e9, compute=False, show_progress=True):
 
-        ltable_splitted = (split_df)(ltable, nltable_chunks)
-        rtable_splitted = (split_df)(rtable, nrtable_chunks)
+        ltable_splitted = delayed(split_df)(ltable, nltable_chunks)
+        rtable_splitted = delayed(split_df)(rtable, nrtable_chunks)
 
-        l_proj_attrs = (get_attrs_to_project)(l_key, self.ltable_attrs,
+        l_proj_attrs = delayed(get_attrs_to_project)(l_key, self.ltable_attrs,
                                               l_output_attrs)
         # needs to be modified as self.ltable_attrs can be None.
-        r_proj_attrs = (get_attrs_to_project)(r_key, self.rtable_attrs,
+        r_proj_attrs = delayed(get_attrs_to_project)(r_key, self.rtable_attrs,
                                               r_output_attrs)
         results = []
         for i in xrange(nltable_chunks):
-            ltbl = (proj_df)(ltable_splitted[i], l_proj_attrs)
+            ltbl = delayed(proj_df)(ltable_splitted[i], l_proj_attrs)
             for j in xrange(nrtable_chunks):
-                rtbl = (proj_df)(rtable_splitted[j], r_proj_attrs)
-                result = (self._block_tables_part)(ltbl, rtbl, l_key, r_key,
+                rtbl = delayed(proj_df)(rtable_splitted[j], r_proj_attrs)
+                result = delayed(self._block_tables_part)(ltbl, rtbl, l_key, r_key,
                                                    l_output_attrs,
                                                    r_output_attrs, l_output_prefix,
                                                    r_output_prefix)
                 results.append(result)
-        candset = (concat_df)(results)
-        candset = (add_id)(candset)
+        candset = delayed(concat_df)(results)
+        candset = delayed(add_id)(candset)
 
         if compute:
             candset = exec_dag(candset, num_workers, cache_size, scheduler,

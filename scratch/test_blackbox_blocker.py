@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 import dask
+from dask.multiprocessing import get
 
 from dmagellan.blocker.blackbox.blackbox_blocker import BlackBoxBlocker
 from dmagellan.blocker.attrequivalence.attr_equiv_blocker import AttrEquivalenceBlocker
@@ -38,11 +39,11 @@ C = ab.block_tables(A, B, 'ID', 'ID', 'zipcode', 'zipcode',
                     compute=True
                     )
 D = bb.block_candset(C, A, B, 'l_ID', 'r_ID', "ID", "ID", nchunks=4,
-                    compute=False, scheduler=dask.get)
+                    compute=True, scheduler=get)
 # D = bb.block_candset(C, A, B, "l_ID", "r_ID", "ID", "ID", 'zipcode', 'zipcode',
 #                      nchunks=4, compute=True)
-print(len(D))
-print(D.head())
+# print(len(D))
+# print(D.head())
 
 
 
