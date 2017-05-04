@@ -5,10 +5,7 @@ THIS FUNCTION NEEDS TO BE MODIFIED TO GET RID OF CATALOG HELPER
 import logging
 
 import pandas as pd
-import py_entitymatching.catalog.catalog_manager as cm
-import py_entitymatching.utils.catalog_helper as ch
-import py_entitymatching.utils.generic_helper as gh
-import pyprind
+import dmagellan.utils.py_utils.utils as gh
 
 logger = logging.getLogger(__name__)
 

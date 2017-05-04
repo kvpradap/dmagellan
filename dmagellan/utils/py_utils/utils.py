@@ -162,3 +162,10 @@ def exec_dag(dag, num_workers=None, cache_size=1e9, scheduler=dask.threaded.get,
 def list_diff(a_list, b_list):
     b_set = list_drop_duplicates(b_list)
     return [a for a in a_list if a not in b_set]
+
+def list_drop_duplicates(lst):
+    a = []
+    for i in lst:
+        if i not in a:
+            a.append(i)
+    return a
