@@ -9,9 +9,10 @@ from dask import threaded, delayed
 from py_stringmatching.tokenizer.qgram_tokenizer import QgramTokenizer
 from py_stringmatching.tokenizer.whitespace_tokenizer import WhitespaceTokenizer
 
-from dmagellan.blocker.blocker_utils import get_attrs_to_project
+from dmagellan.blocker.blocker_utils import get_attrs_to_project, \
+    get_lattrs_to_project, get_rattrs_to_project
 from dmagellan.utils.py_utils.utils import split_df, proj_df, add_attributes, concat_df, \
-    add_id, exec_dag
+    add_id, exec_dag, lsplit_df, rsplit_df, candsplit_df, lproj_df, rproj_df, candproj_df
 
 
 class RuleBasedBlocker:
@@ -84,20 +85,22 @@ class RuleBasedBlocker:
                      r_output_attrs=None, l_output_prefix='l_', r_output_prefix='r_',
                      nltable_chunks=1, nrtable_chunks=1, scheduler=threaded.get,
                      num_workers=None, cache_size=1e9, compute=False, show_progress=True):
-        ltable_splitted = delayed(split_df)(ltable, nltable_chunks)
-        rtable_splitted = delayed(split_df)(rtable, nrtable_chunks)
+        ltable_splitted = (lsplit_df)(ltable, nltable_chunks)
+        rtable_splitted = (rsplit_df)(rtable, nrtable_chunks)
 
-        l_proj_attrs = delayed(get_attrs_to_project)(l_key, self.ltable_attrs,
-                                              l_output_attrs)
-        # needs to be modified as self.ltable_attrs can be None.
-        r_proj_attrs = delayed(get_attrs_to_project)(r_key, self.rtable_attrs,
-                                              r_output_attrs)
+        # l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs,
+        #                                       l_output_attrs)
+        # # needs to be modified as self.ltable_attrs can be None.
+        # r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs,
+        #                                       r_output_attrs)
         results = []
         for i in xrange(nltable_chunks):
-            ltbl = delayed(proj_df)(ltable_splitted[i], l_proj_attrs)
+            # ltbl = (lproj_df)(ltable_splitted[i], l_proj_attrs)
             for j in xrange(nrtable_chunks):
-                rtbl = delayed(proj_df)(rtable_splitted[i], r_proj_attrs)
-                result = delayed(self._block_tables_part)(ltbl, rtbl, l_key, r_key,
+                # rtbl = (rproj_df)(rtable_splitted[j], r_proj_attrs)
+                result = delayed(self._block_tables_part)(ltable_splitted[i],
+                                                          rtable_splitted[j],
+                                                          l_key, r_key,
                                                    l_output_attrs, r_output_attrs,
                                                    l_output_prefix, r_output_prefix)
                 results.append(result)
@@ -111,7 +114,13 @@ class RuleBasedBlocker:
     def block_candset(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key, r_key,
                       nchunks=1, scheduler=threaded.get, num_workers=None,
                       cache_size=1e9, compute=False, show_progress=True):
-        candset_splitted = delayed(split_df)(candset, nchunks)
+        candset_splitted = delayed(candsplit_df)(candset, nchunks)
+        # l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs)
+        # r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs)
+        #
+        # ltbl = (lproj_df)(ltable, l_proj_attrs)
+        # rtbl = (rproj_df)(rtable, r_proj_attrs)
+
         results = []
         for i in xrange(nchunks):
             result = delayed(self._block_candset_part)(candset_splitted[i], ltable,
@@ -131,6 +140,14 @@ class RuleBasedBlocker:
         fk_ltable, fk_rtable = l_output_prefix + l_key, r_output_prefix + r_key
         candset, rule_applied = self._block_tables_with_filters(ltable, rtable, l_key,
                                                                 r_key)
+
+        l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs,
+                                              l_output_attrs)
+        # needs to be modified as self.ltable_attrs can be None.
+        r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs,
+                                              r_output_attrs)
+        ltable = lproj_df(ltable, l_proj_attrs)
+        rtable = rproj_df(rtable, r_proj_attrs)
         if candset is None:
             candset = self._block_tables_without_filters(ltable, rtable, l_key, r_key,
                                                          fk_ltable, fk_rtable)
@@ -149,7 +166,13 @@ class RuleBasedBlocker:
 
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                             r_key):
-        candset = self._block_candset_excluding_rule(candset, ltable, rtable,
+        l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs)
+        r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs)
+
+        ltbl = (lproj_df)(ltable, l_proj_attrs)
+        rtbl = (rproj_df)(rtable, r_proj_attrs)
+
+        candset = self._block_candset_excluding_rule(candset, ltbl, rtbl,
                                                      fk_ltable, fk_rtable,
                                                      l_key, r_key)
 

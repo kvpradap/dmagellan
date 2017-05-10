@@ -5,13 +5,15 @@ from functools import partial
 import pandas as pd
 from dask import threaded, delayed
 
-from dmagellan.blocker.blocker_utils import get_attrs_to_project
+from dmagellan.blocker.blocker_utils import get_attrs_to_project, \
+    get_lattrs_to_project, get_rattrs_to_project
 from dmagellan.blocker.overlap.overlapprober import OverlapProber
 from dmagellan.tokenizer.qgramtokenizer import QgramTokenizer
 from dmagellan.tokenizer.whitespacetokenizer import WhiteSpaceTokenizer
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 from dmagellan.utils.py_utils.utils import str2bytes, split_df, build_inv_index, \
-    proj_df, tokenize_strings, add_attributes, concat_df, add_id, exec_dag
+    proj_df, tokenize_strings, add_attributes, concat_df, add_id, exec_dag, lsplit_df, \
+    rsplit_df, candsplit_df, lproj_df, rproj_df, candproj_df
 
 
 class OverlapBlocker:
@@ -62,6 +64,14 @@ class OverlapBlocker:
                           r_block_attr,
                           tokenizer, threshold, rem_stop_words, l_output_attrs,
                           r_output_attrs, l_output_prefix, r_output_prefix):
+        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr, l_output_attrs)
+        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr, r_output_attrs)
+
+
+
+        ltable = (lproj_df)(ltable, l_proj_attrs)
+        rtable = (rproj_df)(rtable, r_proj_attrs)
+
         ltbl = ltable[~ltable[l_block_attr].isnull()]
         rtbl = rtable[~rtable[r_block_attr].isnull()]
 
@@ -83,27 +93,41 @@ class OverlapBlocker:
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                             r_key, l_block_attr, r_block_attr, rem_stop_words, tokenizer,
                             threshold):
+        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr)
+        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr)
+
+        # ltbl = (lproj_df)(ltable, l_proj_attrs)
+        # rtbl = (rproj_df)(rtable, r_proj_attrs)
+
+        ltable = (lproj_df)(ltable, l_proj_attrs)
+        rtable = (rproj_df)(rtable, r_proj_attrs)
+
         ltbl = ltable[~ltable[l_block_attr].isnull()]  # this might be redundant
         rtbl = rtable[~rtable[r_block_attr].isnull()]  # this might be redundant
         l_prefix, r_prefix = '__blk_a_', '__blk_b_'
-        temp_candset = add_attributes(candset, ltbl, rtbl, fk_ltable, fk_rtable, l_key,
-                                      r_key, [l_block_attr],
-                                      [r_block_attr], l_prefix, r_prefix)
-        l_chk, r_chk = l_prefix + l_block_attr, r_prefix + r_block_attr
+        if len(candset):
+            temp_candset = add_attributes(candset, ltbl, rtbl, fk_ltable, fk_rtable, l_key,
+                                          r_key, [l_block_attr],
+                                          [r_block_attr], l_prefix, r_prefix)
+            l_chk, r_chk = l_prefix + l_block_attr, r_prefix + r_block_attr
 
-        x = self._process_column(temp_candset[l_chk], rem_stop_words)
-        x = x.map(str2bytes).map(tokenizer.tokenize)
+            x = self._process_column(temp_candset[l_chk], rem_stop_words)
+            x = x.map(str2bytes).map(tokenizer.tokenize)
 
-        y = self._process_column(temp_candset[r_chk], rem_stop_words)
-        y = y.map(str2bytes).map(tokenizer.tokenize)
+            y = self._process_column(temp_candset[r_chk], rem_stop_words)
+            y = y.map(str2bytes).map(tokenizer.tokenize)
 
-        overlap_fn = partial(self._compute_overlap, threshold=threshold)
-        tmp = pd.DataFrame()
-        tmp['x'] = x
-        tmp['y'] = y
-        valid = tmp.apply(overlap_fn, raw=True, axis=1)
-        valid_candset = candset[valid.values]
-        return valid_candset
+            overlap_fn = partial(self._compute_overlap, threshold=threshold)
+            tmp = pd.DataFrame()
+            tmp['x'] = x
+            tmp['y'] = y
+            # print(tmp)
+            valid = tmp.apply(overlap_fn, raw=True, axis=1)
+            # print(len(valid))
+            valid_candset = candset[valid.values]
+            return valid_candset
+        else:
+            candset
 
     def block_tables(self, ltable, rtable, l_key, r_key, l_block_attr,
                      r_block_attr, rem_stop_words=False, q_val=None, word_level=True,
@@ -113,11 +137,11 @@ class OverlapBlocker:
                      num_workers=None, cache_size=1e9, compute=False, show_progress=True):
         # @todo: validations.
 
-        ltable_splitted = (split_df)(ltable, nltable_chunks)
-        rtable_splitted = (split_df)(rtable, nrtable_chunks)
+        ltable_splitted = (lsplit_df)(ltable, nltable_chunks)
+        rtable_splitted = (rsplit_df)(rtable, nrtable_chunks)
 
-        l_proj_attrs = delayed(get_attrs_to_project)(l_key, l_block_attr, l_output_attrs)
-        r_proj_attrs = delayed(get_attrs_to_project)(r_key, r_block_attr, r_output_attrs)
+        # l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr, l_output_attrs)
+        # r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr, r_output_attrs)
 
         if word_level == True:
             tokenizer = WhiteSpaceTokenizer()
@@ -126,10 +150,12 @@ class OverlapBlocker:
 
         results = []
         for i in xrange(nltable_chunks):
-            ltbl = delayed(proj_df)(ltable_splitted[i], l_proj_attrs)
+            # ltbl = (lproj_df)(ltable_splitted[i], l_proj_attrs)
             for j in xrange(nrtable_chunks):
-                rtbl = delayed(proj_df)(rtable_splitted[j], r_proj_attrs)
-                result = delayed(self._block_table_part)(ltbl, rtbl, l_key, r_key,
+                # rtbl = (rproj_df)(rtable_splitted[j], r_proj_attrs)
+                result = delayed(self._block_table_part)(ltable_splitted[i],
+                                                         rtable_splitted[j], l_key,
+                                                         r_key,
                                                          l_block_attr,
                                                          r_block_attr, tokenizer,
                                                          overlap_size,
@@ -152,13 +178,13 @@ class OverlapBlocker:
                       nchunks=1, scheduler=threaded.get,
                       num_workers=None, cache_size=1e9, compute=False,
                       show_progress=True):
-        cand_splitted = delayed(split_df)(candset, nchunks)
+        cand_splitted = delayed(candsplit_df)(candset, nchunks)
 
-        l_proj_attrs = delayed(get_attrs_to_project)(l_key, l_block_attr)
-        r_proj_attrs = delayed(get_attrs_to_project)(r_key, r_block_attr)
-
-        ltbl = delayed(proj_df)(ltable, l_proj_attrs)
-        rtbl = delayed(proj_df)(rtable, r_proj_attrs)
+        # l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr)
+        # r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr)
+        #
+        # ltbl = (lproj_df)(ltable, l_proj_attrs)
+        # rtbl = (rproj_df)(rtable, r_proj_attrs)
 
         if word_level == True:
             tokenizer = WhiteSpaceTokenizer()
@@ -167,7 +193,7 @@ class OverlapBlocker:
 
         results = []
         for i in xrange(nchunks):
-            result = delayed(self._block_candset_part)(cand_splitted[i], ltbl, rtbl,
+            result = delayed(self._block_candset_part)(cand_splitted[i], ltable, rtable,
                                                        fk_ltable,
                                                        fk_rtable, l_key, r_key,
                                                        l_block_attr,

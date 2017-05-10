@@ -87,9 +87,32 @@ def split_df(df, nchunks):
     sample_splitted = np.array_split(df, nchunks)
     return sample_splitted
 
+def lsplit_df(df, nchunks):
+    sample_splitted = np.array_split(df, nchunks)
+    return sample_splitted
+
+def rsplit_df(df, nchunks):
+    sample_splitted = np.array_split(df, nchunks)
+    return sample_splitted
+
+def candsplit_df(df, nchunks):
+    sample_splitted = np.array_split(df, nchunks)
+    return sample_splitted
+
+
 
 def proj_df(df, cols):
     return df[cols]
+
+def lproj_df(df, cols):
+    return df[cols]
+
+def rproj_df(df, cols):
+    return df[cols]
+
+def candproj_df(df, cols):
+    return df[cols]
+
 
 
 def rename_cols(df, cols):
@@ -129,11 +152,13 @@ def create_proj_df(df, key, vals, attrs, colnames):
 
 
 def concat_df(dfs):
+
     res = pd.concat(dfs, ignore_index=True)
     return res
 
 
 def add_id(df):
+    # print('Inside add_id')
     if len(df):
         df.insert(0, '_id', range(len(df)))
     return df
