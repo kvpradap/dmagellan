@@ -166,15 +166,18 @@ class RuleBasedBlocker:
 
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                             r_key):
-        l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs)
+        if isinstance(candset, pd.DataFrame) and len(candset):
+            l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs)
+            r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs)
 
-        ltbl = (lproj_df)(ltable, l_proj_attrs)
-        rtbl = (rproj_df)(rtable, r_proj_attrs)
+            ltbl = (lproj_df)(ltable, l_proj_attrs)
+            rtbl = (rproj_df)(rtable, r_proj_attrs)
 
-        candset = self._block_candset_excluding_rule(candset, ltbl, rtbl,
-                                                     fk_ltable, fk_rtable,
-                                                     l_key, r_key)
+            candset = self._block_candset_excluding_rule(candset, ltbl, rtbl,
+                                                         fk_ltable, fk_rtable,
+                                                         l_key, r_key)
+            if not isinstance(candset, pd.DataFrame):
+                print('Returning {0}'.format(candset))
 
         return candset
 

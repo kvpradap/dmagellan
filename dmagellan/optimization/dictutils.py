@@ -6,7 +6,7 @@ from dask.dot import dot_graph
 from copy import deepcopy
 from dask.delayed import Delayed
 
-
+from dask.core import flatten
 
 
 def get_class_that_defined_method(meth):
@@ -29,7 +29,7 @@ def get_keys(d, key):
 def get_dependencies(dag, node):
     if not dag.has_key(node):
         raise AssertionError('Key {0} not in dag'.format(key))
-    val = dag[node]
+    val = ((dag[node]))
     input_keys = []
     for v in val[1:]:
         if type(v) == type(''):
@@ -98,13 +98,12 @@ def get_table_chunks(blocker):
     # chunks = {}
     # chunks['nlchunks'] = l_split[2]
     # chunks['nrchunks'] = r_split[2]
-    return b
+    return len(b)
 
 
 def get_candset_chunks(blocker):
-    split_dfs = get_keys(blocker, 'candsplit_df')
-    assert (len(split_dfs) == 1)
-    return blocker[split_dfs[0]][2]
+    split_dfs = get_keys(blocker, '_block_candset_part')
+    return len(split_dfs)
 
 
 def get_blocker_type(blocker, is_cand):
@@ -260,5 +259,118 @@ def comp(dag, blocker_list):
     last_node = get_lastnode(dict(_b))
     if last_node != dag.key:
         dag = Delayed(last_node, _b)
+    else:
+        dag.dask = _b
     x = dag.compute()
     return x
+
+def comp_fuse(dag, fused_blocker_list, blocker_list):
+    from copy import deepcopy
+    dag = deepcopy(dag)
+    _b = convert_ldicts_to_sdict(blocker_list)
+
+    last_node = get_lastnode(dict(_b))
+    _b = convert_ldicts_to_sdict(fused_blocker_list)
+    if last_node != dag.key:
+        dag = Delayed(last_node, _b)
+    else:
+        dag.dask = _b
+    x = dag.compute()
+    return x
+
+def ischunkscompatible(blocker1, blocker2):
+    if not iscand(blocker1):
+        chunks1 = get_table_chunks(blocker1)
+    else:
+        chunks1 = get_candset_chunks(blocker1)
+
+    if not iscand(blocker2):
+        chunks2 = get_table_chunks(blocker2)
+    else:
+        chunks2 = get_candset_chunks(blocker2)
+
+    if chunks1 == chunks2:
+        return True
+    else:
+        return False
+
+
+
+
+
+
+def recurse_dep_keys(blocker, key, copy=True):
+    if copy:
+        blocker = deepcopy(blocker)
+    inp = []
+    out = set()
+    inp.append(key)
+    i = 0
+    while (len(inp)):
+        key = inp.pop(0)
+        #         print()
+        out.add(key)
+        deps = get_dependencies(blocker, key)
+        #         print key, deps
+        if key_split(key) != '_block_tables_part' and key_split(
+                key) != '_block_candset_part':
+            inp.extend(deps)
+        else:
+            inp.append(deps[0])
+            #         print(i)
+            #         print(out)
+            #         i+=1
+    return out
+
+
+def remove_concat_split(blocker1, blocker2, copy=True):
+    if copy:
+        blocker1 = deepcopy(blocker1)
+        blocker2 = deepcopy(blocker2)
+    # print('Inside')
+    compat = ischunkscompatible(blocker1, blocker2)
+    if compat:
+        concat_df1 = get_keys(blocker1, 'concat_df')[0]
+        dep1 = get_dependencies(blocker1,
+                                concat_df1)  # this will be a list of blocker outputs
+
+        concat_df2 = get_keys(blocker2, 'concat_df')[0]
+        dep2 = get_dependencies(blocker2,
+                                concat_df2)  # this will be a list of blocker outputs
+
+        blocker1_keys_to_remove = set()
+        blocker2_keys_to_remove = set()
+
+        blocker1_keys_to_remove.add(concat_df1)
+        for i in range(len(dep1)):
+            blocker2_vals = list(blocker2[dep2[i]])
+            old_dep = blocker2_vals[1]
+            blocker2_vals[1] = dep1[i]
+            blocker2[dep2[i]] = tuple(blocker2_vals)
+            #             print(old_dep)
+
+            t = recurse_dep_keys(blocker2, old_dep)
+            #             print(blocker2_keys_to_remove)
+            blocker2_keys_to_remove.update(t)
+
+            # clean up unnecessary stuff:
+            # blocker1: remove concat df
+        #         print(blocker2_keys_to_remove)
+        for key in blocker1_keys_to_remove:
+            del blocker1[key]
+        for key in blocker2_keys_to_remove:
+            #             print(key)
+            del blocker2[key]
+
+
+            #         print(blocker1_keys_to_remove)
+            #         print(blocker2_keys_to_remove)
+            # blocker2
+    return blocker1, blocker2
+
+
+def remove_concat_split_for_blocker_list(blocker_list):
+    for i in range(len(blocker_list)-1):
+        print('Processing {0} and {1}'.format(i, i+1))
+        blocker_list[i], blocker_list[i+1] = remove_concat_split(blocker_list[i], blocker_list[i+1])
+    return blocker_list

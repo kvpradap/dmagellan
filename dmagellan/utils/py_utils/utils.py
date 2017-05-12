@@ -152,7 +152,7 @@ def create_proj_df(df, key, vals, attrs, colnames):
 
 
 def concat_df(dfs):
-
+    dfs = [x for x in dfs if isinstance(x, pd.DataFrame)]
     res = pd.concat(dfs, ignore_index=True)
     return res
 

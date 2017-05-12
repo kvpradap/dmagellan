@@ -73,53 +73,63 @@ class BlackBoxBlocker:
         candset = add_attributes(candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                                  r_key, l_output_attrs, r_output_attrs,
                                  l_output_prefix, r_output_prefix)
+        if not isinstance(candset, pd.DataFrame):
+            print('Returning {0}'.format(candset))
+
         return candset
 
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                             r_key):
 
-        l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs)
+        if isinstance(candset, pd.DataFrame) and len(candset):
+            l_proj_attrs = (get_lattrs_to_project)(l_key, self.ltable_attrs)
+            r_proj_attrs = (get_rattrs_to_project)(r_key, self.rtable_attrs)
 
-        ltbl = (lproj_df)(ltable, l_proj_attrs)
-        rtbl = (rproj_df)(rtable, r_proj_attrs)
+            ltbl = (lproj_df)(ltable, l_proj_attrs)
+            rtbl = (rproj_df)(rtable, r_proj_attrs)
 
-        ltbl = ltbl.set_index(l_key, drop=False)
-        rtbl = rtbl.set_index(r_key, drop=False)
-        # if self.ltable_attrs != None:
-        #     ltbl = ltbl[self.ltable_attrs]
-        #
-        # if self.rtable_attrs != None:
-        #     rtbl = rtbl[self.rtable_attrs]
+            ltbl = ltbl.set_index(l_key, drop=False)
+            rtbl = rtbl.set_index(r_key, drop=False)
+            # if self.ltable_attrs != None:
+            #     ltbl = ltbl[self.ltable_attrs]
+            #
+            # if self.rtable_attrs != None:
+            #     rtbl = rtbl[self.rtable_attrs]
 
-        c_df = candset[[fk_ltable, fk_rtable]]
-        l_dict = {}
-        r_dict = {}
-        # list to keep track of valid ids
-        valid = []
-        l_id_pos = list(c_df.columns).index(fk_ltable)
-        r_id_pos = list(c_df.columns).index(fk_rtable)
-        for row in c_df.itertuples(index=False):
-            row_lkey = row[l_id_pos]
-            if row_lkey not in l_dict:
-                l_tuple = ltbl.ix[row_lkey]
-                l_dict[row_lkey] = l_tuple
-            else:
-                l_tuple = l_dict[row_lkey]
+            c_df = candset[[fk_ltable, fk_rtable]]
+            l_dict = {}
+            r_dict = {}
+            # list to keep track of valid ids
+            valid = []
+            l_id_pos = list(c_df.columns).index(fk_ltable)
+            r_id_pos = list(c_df.columns).index(fk_rtable)
+            for row in c_df.itertuples(index=False):
+                row_lkey = row[l_id_pos]
+                if row_lkey not in l_dict:
+                    l_tuple = ltbl.ix[row_lkey]
+                    l_dict[row_lkey] = l_tuple
+                else:
+                    l_tuple = l_dict[row_lkey]
 
-            # # get rtuple, try dictionary first, then dataframe
-            row_rkey = row[r_id_pos]
-            if row_rkey not in r_dict:
-                r_tuple = rtbl.ix[row_rkey]
-                r_dict[row_rkey] = r_tuple
-            else:
-                r_tuple = r_dict[row_rkey]
-            res = self.black_box_function(l_tuple, r_tuple)
-            if not res:
-                valid.append(True)
-            else:
-                valid.append(False)
-        return candset[valid]
+                # # get rtuple, try dictionary first, then dataframe
+                row_rkey = row[r_id_pos]
+                if row_rkey not in r_dict:
+                    r_tuple = rtbl.ix[row_rkey]
+                    r_dict[row_rkey] = r_tuple
+                else:
+                    r_tuple = r_dict[row_rkey]
+                res = self.black_box_function(l_tuple, r_tuple)
+                if not res:
+                    valid.append(True)
+                else:
+                    valid.append(False)
+            res = candset[valid]
+            if not isinstance(res, pd.DataFrame):
+                print('Returning {0}'.format(res))
+            return res
+
+        else:
+            return candset
 
     def block_tables(self, ltable, rtable, l_key, r_key, l_output_attrs=None,
                      r_output_attrs=None, l_output_prefix='l_', r_output_prefix='r_',

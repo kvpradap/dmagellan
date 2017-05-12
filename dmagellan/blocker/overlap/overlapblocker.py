@@ -15,6 +15,7 @@ from dmagellan.utils.py_utils.utils import str2bytes, split_df, build_inv_index,
     proj_df, tokenize_strings, add_attributes, concat_df, add_id, exec_dag, lsplit_df, \
     rsplit_df, candsplit_df, lproj_df, rproj_df, candproj_df
 
+import pandas as pd
 
 class OverlapBlocker:
     def __init__(self):
@@ -88,24 +89,28 @@ class OverlapBlocker:
         candset = add_attributes(candset, ltbl, rtbl, fk_ltable, fk_rtable, l_key,
                                  r_key, l_output_attrs, r_output_attrs,
                                  l_output_prefix, r_output_prefix)
+        if not isinstance(candset, pd.DataFrame):
+            print('Returning {0}'.format(candset))
+
         return candset
 
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                             r_key, l_block_attr, r_block_attr, rem_stop_words, tokenizer,
                             threshold):
-        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr)
+        if isinstance(candset, pd.DataFrame) and len(candset):
+            l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr)
+            r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr)
 
-        # ltbl = (lproj_df)(ltable, l_proj_attrs)
-        # rtbl = (rproj_df)(rtable, r_proj_attrs)
+            # ltbl = (lproj_df)(ltable, l_proj_attrs)
+            # rtbl = (rproj_df)(rtable, r_proj_attrs)
 
-        ltable = (lproj_df)(ltable, l_proj_attrs)
-        rtable = (rproj_df)(rtable, r_proj_attrs)
+            ltable = (lproj_df)(ltable, l_proj_attrs)
+            rtable = (rproj_df)(rtable, r_proj_attrs)
 
-        ltbl = ltable[~ltable[l_block_attr].isnull()]  # this might be redundant
-        rtbl = rtable[~rtable[r_block_attr].isnull()]  # this might be redundant
-        l_prefix, r_prefix = '__blk_a_', '__blk_b_'
-        if len(candset):
+            ltbl = ltable[~ltable[l_block_attr].isnull()]  # this might be redundant
+            rtbl = rtable[~rtable[r_block_attr].isnull()]  # this might be redundant
+            l_prefix, r_prefix = '__blk_a_', '__blk_b_'
+
             temp_candset = add_attributes(candset, ltbl, rtbl, fk_ltable, fk_rtable, l_key,
                                           r_key, [l_block_attr],
                                           [r_block_attr], l_prefix, r_prefix)

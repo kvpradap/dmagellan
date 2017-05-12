@@ -8,14 +8,15 @@ from dmagellan.utils.py_utils.utils import add_attributes, rename_cols
 from dmagellan.utils.py_utils.utils import split_df, proj_df, concat_df, add_id, \
     exec_dag, lsplit_df, rsplit_df, candsplit_df, lproj_df, rproj_df, candproj_df
 
+import pandas as pd
 
 class AttrEquivalenceBlocker:
     def _block_table_part(self, ltable, rtable, l_key, r_key, l_block_attr, r_block_attr,
                           l_out_attrs, r_out_attrs, l_prefix,
                           r_prefix):
 
-        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr, l_output_attrs)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr, r_output_attrs)
+        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr, l_out_attrs)
+        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr, r_out_attrs)
 
         ltbl = (lproj_df)(ltable, l_proj_attrs)
         rtbl = (rproj_df)(rtable, r_proj_attrs)
@@ -39,6 +40,8 @@ class AttrEquivalenceBlocker:
                              l_prefix, r_prefix)
 
         # finally return the result.
+        if not isinstance(res, pd.DataFrame):
+            print('Returning {0}'.format(res))
         return res
 
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
@@ -47,24 +50,31 @@ class AttrEquivalenceBlocker:
         # 1. create dummy column names to contain the values pulled from ltable and rtable
         # based on the fk's
 
-        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr)
+        if isinstance(candset, pd.DataFrame) and len(candset):
 
-        ltable = (lproj_df)(ltable, l_proj_attrs)
-        rtable = (rproj_df)(rtable, r_proj_attrs)
+            l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr)
+            r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr)
+
+            ltable = (lproj_df)(ltable, l_proj_attrs)
+            rtable = (rproj_df)(rtable, r_proj_attrs)
 
 
-        l_prefix, r_prefix = '__blk_a_', '__blk_b_'
+            l_prefix, r_prefix = '__blk_a_', '__blk_b_'
 
-        # add attrs
-        cdf = add_attributes(candset, ltable, rtable, fk_ltable, fk_rtable, l_key, r_key,
-                             [l_block_attr],
-                             [r_block_attr], l_prefix, r_prefix)
-        l_chk, r_chk = l_prefix + l_block_attr, r_prefix + r_block_attr
+            # add attrs
+            cdf = add_attributes(candset, ltable, rtable, fk_ltable, fk_rtable, l_key, r_key,
+                                 [l_block_attr],
+                                 [r_block_attr], l_prefix, r_prefix)
+            l_chk, r_chk = l_prefix + l_block_attr, r_prefix + r_block_attr
 
-        res = candset[cdf[l_chk] == cdf[r_chk]]
+            res = candset[cdf[l_chk] == cdf[r_chk]]
 
-        return res
+            if not isinstance(res, pd.DataFrame):
+                print('Returning {0}'.format(res))
+
+            return res
+        else:
+            return candset
 
     def block_tables(self, ltable, rtable, l_key, r_key, l_block_attr, r_block_attr,
                      l_output_attrs=None, r_output_attrs=None, l_output_prefix='l_',
