@@ -23,7 +23,7 @@ C = ob.block_tables(A, B, 'ID', 'ID', 'address', 'address',
 D = ob.block_candset(C, A, B, "l_ID", "r_ID", "ID", "ID", 'name', 'name',
                      nchunks=4, overlap_size=1, compute=True)
 print(len(D))
-print(D.head())
+# print(D.head())
 
 
 

@@ -33,13 +33,19 @@ bb.set_ltable_attrs(['name'])
 bb.set_rtable_attrs(['name'])
 
 A['ID'] = A['ID'] + 10
-C = ab.block_tables(A, B, 'ID', 'ID', 'zipcode', 'zipcode',
+C = bb.block_tables(A, B, 'ID', 'ID',
                     l_output_attrs=['name', 'address'],
                     r_output_attrs=['name', 'address'],
-                    compute=True
+                    compute=False
                     )
 D = bb.block_candset(C, A, B, 'l_ID', 'r_ID', "ID", "ID", nchunks=4,
                     compute=True, scheduler=get)
+
+print(len(D))
+
+
+
+
 # D = bb.block_candset(C, A, B, "l_ID", "r_ID", "ID", "ID", 'zipcode', 'zipcode',
 #                      nchunks=4, compute=True)
 # print(len(D))

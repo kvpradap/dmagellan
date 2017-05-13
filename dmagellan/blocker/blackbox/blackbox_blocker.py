@@ -31,8 +31,8 @@ class BlackBoxBlocker:
     def _block_tables_part(self, ltable, rtable, l_key, r_key, l_output_attrs,
                            r_output_attrs, l_output_prefix, r_output_prefix):
 
-        l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr, l_output_attrs)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr, r_output_attrs)
+        l_proj_attrs = (get_lattrs_to_project)(l_key, l_output_attrs)
+        r_proj_attrs = (get_rattrs_to_project)(r_key, r_output_attrs)
 
 
         l_key_vals = ltable[l_key].values

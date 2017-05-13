@@ -6,11 +6,13 @@ import logging
 
 # import numpy as np
 import pandas as pd
+# import py_entitymatching.utils.catalog_helper as ch
+# import py_entitymatching.utils.generic_helper as gh
+from dmagellan.utils.py_utils.utils import check_attrs_present, list_drop_duplicates, \
+    list_diff, concat_df, candsplit_df, exec_dag
+from dmagellan.matcher.matcher import Matcher
+from dask import threaded, delayed
 
-import py_entitymatching.catalog.catalog_manager as cm
-from py_entitymatching.matcher.matcher import Matcher
-import py_entitymatching.utils.catalog_helper as ch
-import py_entitymatching.utils.generic_helper as gh
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,7 @@ class MLMatcher(Matcher):
     """
     ML Matcher class.
     """
+
     def _fit_sklearn(self, x, y, check_rem=True):
         """
         This function mimics fit method supported by sk-learn.
@@ -48,7 +51,7 @@ class MLMatcher(Matcher):
 
         # Check if the exclude attributes are present in the input table. If
         # not, raise an error.
-        if not ch.check_attrs_present(table, exclude_attrs):
+        if not check_attrs_present(table, exclude_attrs):
             logger.error(
                 'The attributes mentioned in exclude_attrs is not present ' \
                 'in the input table')
@@ -58,20 +61,20 @@ class MLMatcher(Matcher):
 
         # Check if the target attribute is present in the input table. If
         # not, raise an error.
-        if not ch.check_attrs_present(table, target_attr):
+        if not check_attrs_present(table, target_attr):
             logger.error('The target_attr is not present in the input table')
             raise AssertionError(
                 'The target_attr is not present in the input table')
 
         # We now remove duplicate attributes from the exclude_attrs
-        exclude_attrs = gh.list_drop_duplicates(exclude_attrs)
+        exclude_attrs = list_drop_duplicates(exclude_attrs)
 
         # We explicitly append target attribute to exclude attributes
         if target_attr not in exclude_attrs:
             exclude_attrs.append(target_attr)
 
         # Now, we get the attributes to project
-        attributes_to_project = gh.list_diff(list(table.columns), exclude_attrs)
+        attributes_to_project = list_diff(list(table.columns), exclude_attrs)
 
         # Get the predictors and the target attribute from the input table
         # based on the exclude attrs and the target attribute.
@@ -112,11 +115,11 @@ class MLMatcher(Matcher):
         # Check if table and its associated attributes, then call the
         # appropriate function that handles it.
         elif (
-                table is not None and exclude_attrs is not None) \
+                        table is not None and exclude_attrs is not None) \
                 and target_attr is not None:
             self._fit_ex_attrs(table, exclude_attrs, target_attr)
         else:
-        # If the syntax is not what we expect, raise an syntax error.
+            # If the syntax is not what we expect, raise an syntax error.
             raise SyntaxError(
                 'The arguments supplied does not match the signatures '
                 'supported !!!')
@@ -153,7 +156,7 @@ class MLMatcher(Matcher):
             exclude_attrs = [exclude_attrs]
 
         # Get the attributes to project.
-        attributes_to_project = gh.list_diff(list(table.columns), exclude_attrs)
+        attributes_to_project = list_diff(list(table.columns), exclude_attrs)
         # Get feature vectors and the target attribute
         x = table[attributes_to_project]
 
@@ -162,22 +165,23 @@ class MLMatcher(Matcher):
         # Finally return the predictions
         return y
 
-
     def _predict_table_part(self, table, exclude_attrs, target_attr, append, inplace):
-        y = self._predict_ex_attrs(table, exclude_attrs)
-        if target_attr is not None and append is True:
-            if inplace:
-                table[target_attr] = y
-                # Return the updated table
+        if isinstance(table, pd.DataFrame) and len(table):
+            y = self._predict_ex_attrs(table, exclude_attrs)
+            if target_attr is not None and append is True:
+                if inplace:
+                    table[target_attr] = y
+                    # Return the updated table
 
+                else:
+                    # else, create a copy and update it.
+                    table = table.copy()
+                    table[target_attr] = y
+                return table
             else:
-                # else, create a copy and update it.
-                table = table.copy()
-                table[target_attr] = y
-            return table
+                return y
         else:
-            return y
-
+            return None
 
     def _predict_sklearn_part(self, x):
         raise NotImplementedError
@@ -186,13 +190,13 @@ class MLMatcher(Matcher):
                 inplace=True,
                 nchunks=1, scheduler=threaded.get, num_workers=None,
                 cache_size=1e9, compute=False, show_progress=True):
-        candset_splitted = (split_df)(table, nchunks)
+        candset_splitted = delayed(candsplit_df)(table, nchunks)
         results = []
         for i in xrange(nchunks):
-            result = (self._predict_table_part)(candset_splitted[i], table, exclude_attrs,
+            result = delayed(self._predict_table_part)(candset_splitted[i], exclude_attrs,
                                                 target_attr, append, inplace)
             results.append(result)
-        feat_vecs = (concat_df)(results)
+        feat_vecs = delayed(concat_df)(results)
 
         if compute:
             feat_vecs = exec_dag(feat_vecs, num_workers, cache_size,
@@ -201,9 +205,10 @@ class MLMatcher(Matcher):
         return feat_vecs
 
         pass
+
     # predict method
     def __predict(self, x=None, table=None, exclude_attrs=None, target_attr=None,
-                append=False, inplace=True):
+                  append=False, inplace=True):
         # If x is not none, call the predict method that mimics sk-learn
         # predict method.
         if x is not None:
@@ -220,7 +225,7 @@ class MLMatcher(Matcher):
                     # Return the updated table
                     return table
                 else:
-                # else, create a copy and update it.
+                    # else, create a copy and update it.
                     table_copy = table.copy()
                     table_copy[target_attr] = y
                     # copy the properties from the input table to the output

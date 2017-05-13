@@ -6,7 +6,6 @@ import logging
 import pandas as pd
 import six
 
-import py_entitymatching as em
 import dmagellan.feature.attributeutils as au
 import dmagellan.feature.simfunctions as sim
 import dmagellan.feature.tokenizers as tok
@@ -187,11 +186,11 @@ def get_features_for_blocking(ltable, rtable):
                                  tok_funcs, sim_funcs)
 
     # Export important variables to global name space
-    em._match_t = tok_funcs
-    em._block_s = sim_funcs
-    em._atypes1 = attr_types_ltable
-    em._atypes2 = attr_types_rtable
-    em._block_c = attr_corres
+    # em._match_t = tok_funcs
+    # em._block_s = sim_funcs
+    # em._atypes1 = attr_types_ltable
+    # em._atypes2 = attr_types_rtable
+    # em._block_c = attr_corres
     # Return the feature table
     return feature_table
 
@@ -283,11 +282,11 @@ def get_features_for_matching(ltable, rtable):
                                  tok_funcs, sim_funcs)
 
     # Export important variables to global name space
-    em._match_t = tok_funcs
-    em._match_s = sim_funcs
-    em._atypes1 = attr_types_ltable
-    em._atypes2 = attr_types_rtable
-    em._match_c = attr_corres
+    # em._match_t = tok_funcs
+    # em._match_s = sim_funcs
+    # em._atypes1 = attr_types_ltable
+    # em._atypes2 = attr_types_rtable
+    # em._match_c = attr_corres
 
     # Finally return the feature table
     return feature_table

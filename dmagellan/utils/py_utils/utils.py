@@ -5,6 +5,8 @@ import dask
 from dask.diagnostics import ProgressBar
 import pandas as pd
 import numpy as np
+import six
+import logging
 
 
 
@@ -13,7 +15,7 @@ from dmagellan.tokenizer.whitespacetokenizer import WhiteSpaceTokenizer
 from dmagellan.utils.cy_utils.invertedindex import InvertedIndex
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 from dmagellan.utils.cy_utils.tokencontainer import TokenContainer
-
+logger = logging.getLogger(__name__)
 
 def get_proj_cols(idcol, attr, out):
     ocols = [idcol, attr]
@@ -194,3 +196,48 @@ def list_drop_duplicates(lst):
         if i not in a:
             a.append(i)
     return a
+
+
+
+
+def check_attrs_present(table, attrs):
+
+    if not isinstance(table, pd.DataFrame):
+        # logger.error('Input object is not of type pandas data frame')
+        raise AssertionError('Input object is not of type pandas data frame')
+
+    if attrs is None:
+        logger.warning('Input attr. list is null')
+        return False
+
+    if isinstance(attrs, list) is False:
+        attrs = [attrs]
+    status = are_all_attrs_in_df(table, attrs)
+    return status
+
+def are_all_attrs_in_df(df, col_names):
+
+    if not isinstance(df, pd.DataFrame):
+        # logger.error('Input object is not of type pandas data frame')
+        raise AssertionError('Input object is not of type pandas data frame')
+
+    if col_names is None:
+        logger.warning('Input col_names is null')
+        return False
+
+    df_columns_names = list(df.columns)
+    for c in col_names:
+        if c not in df_columns_names:
+            # if verbose:
+            #     logger.warning('Column name (' +c+ ') is not present in dataframe')
+            return False
+    return True
+
+def get_ts():
+    """
+    This is a helper function, to generate a random string based on current
+    time.
+    """
+    t = int(round(time.time() * 1e10))
+    # Return the random string.
+    return str(t)[::-1]
