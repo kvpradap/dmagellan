@@ -13,6 +13,7 @@ from dmagellan.matcher.svmmatcher import SVMMatcher
 from dmagellan.matcher.rfmatcher import RFMatcher
 from dmagellan.matcher.logregmatcher import LogRegMatcher
 from dmagellan.matcher.nbmatcher import NBMatcher
+from dmagellan.matcher.linregmatcher import LinRegMatcher
 
 from dmagellan.mlmatcherselection.mlmatcherselection import select_matcher
 
@@ -41,6 +42,7 @@ svm = SVMMatcher(name='SVM', random_state=0)
 rf = RFMatcher(name='RF', random_state=0)
 lg = LogRegMatcher(name='LogReg', random_state=0)
 nb = NBMatcher(name='NaiveBayes')
+ln = LinRegMatcher(name='LinearRegression')
 F = get_features_for_matching(A, B)
 H = extract_feature_vecs(I, A, B, '_id',  'ltable_id', 'rtable_id', 'id', 'id',
                                  feature_table=F, attrs_after='label', nchunks=4,
@@ -54,9 +56,9 @@ H.fillna(value=0, inplace=True)
 #                 exclude_attrs=['_id', 'ltable_id', 'rtable_id', 'label'],
 #                 strategy='mean')
 # Select the best ML matcher using CV
-result = select_matcher([dt, lg, svm, rf, nb], table=H,
+result = select_matcher([dt, lg, svm, rf, nb, ln], table=H,
         exclude_attrs=['_id', 'ltable_id', 'rtable_id', 'label'],
         k=5,
-        target_attr='label', metric='f1', random_state=0, compute=False)
-# print(result['cv_stats'])
-result.visualize()
+        target_attr='label', metric='f1', random_state=0, compute=True)
+print(result['cv_stats'])
+# result.visualize()
