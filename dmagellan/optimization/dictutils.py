@@ -264,9 +264,10 @@ def comp(dag, blocker_list):
     x = dag.compute()
     return x
 
-def comp_fuse(dag, fused_blocker_list, blocker_list):
+def comp_fuse(dag, fused_blocker_list, blocker_list, copy=False):
     from copy import deepcopy
-    dag = deepcopy(dag)
+    if copy:
+        dag = deepcopy(dag)
     _b = convert_ldicts_to_sdict(blocker_list)
 
     last_node = get_lastnode(dict(_b))
@@ -371,6 +372,80 @@ def remove_concat_split(blocker1, blocker2, copy=True):
 
 def remove_concat_split_for_blocker_list(blocker_list):
     for i in range(len(blocker_list)-1):
-        print('Processing {0} and {1}'.format(i, i+1))
+        # print('Processing {0} and {1}'.format(i, i+1))
         blocker_list[i], blocker_list[i+1] = remove_concat_split(blocker_list[i], blocker_list[i+1])
     return blocker_list
+
+
+def get_keys_ordered(dag, start, search):
+    nodes = []
+    n = get_keys(dag, start)
+    assert(len(n) > 0)
+    nodes.append(n[0])
+    search_nodes = []
+    while len(nodes):
+        node = nodes.pop(0)
+        # print(node)
+        if key_split(node) == search:
+            search_nodes.append(node)
+        dep = get_dependents(dag, node)
+        if len(dep) > 0:
+            if isinstance(dep, list):
+                dep = dep[0]
+            nodes.append(dep)
+    t_search_nodes = get_keys(dag, search)
+#     print(sorted(t_search_nodes))
+#     print(sorted(search_nodes))
+    assert(len(t_search_nodes) == len(search_nodes))
+    assert(set(t_search_nodes) == set(search_nodes))
+    return search_nodes
+
+def get_blocker_subgraphs_ordered(dag, start, search):
+    concat_nodes = get_keys_ordered(dag, start, search)
+    subgraphs = []
+    for concat_node in concat_nodes:
+        if ishead(dag, concat_node):
+            addid_node = get_dependents(dag, concat_node)[0]
+            d = get_subgraph_as_dict_for_node(dag, addid_node)
+        else:
+            d = get_subgraph_as_dict_for_node(dag, concat_node)
+        subgraphs.append(d)
+    return subgraphs
+
+
+def doescontain_blockcandset(nodes):
+    for node in nodes:
+        if key_split(node) == '_block_candset_part':
+            return True
+    return False
+
+def get_block_candset_node(nodes):
+    l = []
+    for node in nodes:
+        if key_split(node) == '_block_candset_part':
+            l.append(node)
+    return l
+
+
+def set_ltable_rtable_for_cand_deps(d, head, ltbl, rtbl, copy=True):
+    if copy:
+        d = deepcopy(d)
+
+    while (True):
+        deps = get_dependents(d, head)
+        if doescontain_blockcandset(deps):
+            candsetnode = get_block_candset_node(deps)
+            assert len(candsetnode) == 1
+            for n in candsetnode:
+                # c1_ltbl, c1_rtbl = d[n][2], d[n][3]
+                v = list(d[n])
+                v[2] = ltbl
+                v[3] = rtbl
+                d[n] = tuple(v)
+
+            # d[n][2] = ltbl
+            #                 d[n][3] = rtbl
+            else:
+                break
+    return d
+
