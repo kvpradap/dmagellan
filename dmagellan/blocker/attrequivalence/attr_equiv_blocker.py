@@ -10,7 +10,7 @@ from dmagellan.utils.py_utils.utils import split_df, proj_df, concat_df, add_id,
 
 import pandas as pd
 
-class AttrEquivalenceBlocker:
+class AttrEquivalenceBlocker(object):
     def _block_table_part(self, ltable, rtable, l_key, r_key, l_block_attr, r_block_attr,
                           l_out_attrs, r_out_attrs, l_prefix,
                           r_prefix):

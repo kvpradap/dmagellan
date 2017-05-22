@@ -10,7 +10,7 @@ from dmagellan.utils.py_utils.utils import split_df, proj_df, add_attributes, co
     candproj_df
 
 
-class BlackBoxBlocker:
+class BlackBoxBlocker(object):
     def __init__(self, *args, **kwargs):
         black_box_function = kwargs.get('function', None)
         ltable_attrs = kwargs.get('ltable_attrs', None)

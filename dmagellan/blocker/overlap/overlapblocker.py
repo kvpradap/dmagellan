@@ -17,7 +17,7 @@ from dmagellan.utils.py_utils.utils import str2bytes, split_df, build_inv_index,
 
 import pandas as pd
 
-class OverlapBlocker:
+class OverlapBlocker(object):
     def __init__(self):
         self.stop_words = ['a', 'an', 'and', 'are', 'as', 'at',
                            'be', 'by', 'for', 'from',

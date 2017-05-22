@@ -15,7 +15,7 @@ from dmagellan.utils.py_utils.utils import split_df, proj_df, add_attributes, co
     add_id, exec_dag, lsplit_df, rsplit_df, candsplit_df, lproj_df, rproj_df, candproj_df
 
 
-class RuleBasedBlocker:
+class RuleBasedBlocker(object):
     def __init__(self, *args, **kwargs):
         feature_table = kwargs.pop('feature_table', None)
         self.feature_table = feature_table
