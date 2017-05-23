@@ -22,7 +22,7 @@ C = ab.block_tables(A, B, 'ID', 'ID', 'birth_year', 'birth_year', ['name', 'addr
 D = ab.block_candset(C, A, B, "l_ID", "r_ID", "ID", "ID", 'zipcode', 'zipcode',
                      nchunks=4, compute=True)
 print(len(D))
-# print(D.head())
+
 
 
 

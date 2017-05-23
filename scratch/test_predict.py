@@ -1,6 +1,5 @@
 import sys
-sys.path.append('/Users/pradap/Documents/Research/Python-Package/anhaid'
-                '/py_entitymatching')
+sys.path.append('/Users/pradap/Documents/Research/Python-Package/anhaid/py_entitymatching')
 
 import py_entitymatching as em
 import os
@@ -47,15 +46,21 @@ dt.fit(table=H,
        target_attr='label')
 
 # Convert J into a set of feature vectors using F
-L = extract_feature_vecs(J, A, B, '_id',  'ltable_id', 'rtable_id', 'id', 'id',
+L = extract_feature_vecs(J, A, B, '_id',  'ltable_id', 'rtable_id', 'id', 'id', nchunks=4,
                             feature_table=F, attrs_after='label', show_progress=False,
-                         compute=True)
+                         compute=False)
 
-print(len(L))
+# print(len(L))
 # print(L.head(1))
 predictions = dt.predict(table=L, exclude_attrs=['_id', 'ltable_id', 'rtable_id', 'label'],
-              append=True, target_attr='predicted', inplace=False, nchunks=100,
-                         compute=True)
+              append=True, target_attr='predicted', inplace=False, nchunks=2,
+                         compute=False)
+from dmagellan.optimization.exfeatvecs_predict_sequence_opt import delay_concat, fuse_dag
+opt1 = delay_concat(dict(predictions.dask))
+opt2 = fuse_dag(opt1)
+
+from dask.dot import dot_graph
+dot_graph(opt2)
 # print(predictions.head())
 # predictions.visualize()
 

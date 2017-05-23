@@ -7,7 +7,7 @@
 
 # imports
 from .dictutils import *
-
+from dask.optimize import cull, fuse
 
 # opt 1
 def rearrange_blockers(dag):
@@ -31,6 +31,8 @@ def move_addid(dag, start='_block_table_part', search='concat_df', copy=False):
 
 # opt 2
 def delay_concat(dag, start='_block_table_part', search='concat_df', copy=False):
+    if copy:
+        dag = deepcopy(dag)
     if isinstance(dag, dict):
         blocker_list = get_blocker_subgraphs_ordered(dag, start, search)
     else:
@@ -52,6 +54,6 @@ def fuse_dag(dag, copy=False):
         dag = deepcopy(dag)
     dag = dict(dag)
     dsk, dep = cull(dag, dag.keys())
-    dsk, dep = fuse(dsk, ave_width=2, rename_keys=False)
+    dsk, dep = fuse(dsk, ave_width=1, rename_keys=False)
     return dsk
 

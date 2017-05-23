@@ -91,20 +91,16 @@ def get_blocker_subgraphs(dag):
 
 
 def get_table_chunks(blocker):
-    b = get_keys(blocker, '_block_table_part')
-    # r_split = get_keys(blocker, 'rsplit_df')[0]
-
-    # assert (len(split_dfs) == 2)
-    # chunks = {}
-    # chunks['nlchunks'] = l_split[2]
-    # chunks['nrchunks'] = r_split[2]
-    return len(b)
-
+    return get_nchunks_of_type(blocker, '_block_table_part')
 
 def get_candset_chunks(blocker):
-    split_dfs = get_keys(blocker, '_block_candset_part')
-    return len(split_dfs)
+    # split_dfs = get_keys(blocker, '_block_candset_part')
+    # return len(split_dfs)
+    return get_nchunks_of_type(blocker, '_block_candset_part')
 
+def get_nchunks_of_type(d, key):
+    n = get_keys(d, key)
+    return len(n)
 
 def get_blocker_type(blocker, is_cand):
     if is_cand:
@@ -279,7 +275,7 @@ def comp_fuse(dag, fused_blocker_list, blocker_list, copy=False):
     x = dag.compute()
     return x
 
-def ischunkscompatible(blocker1, blocker2):
+def isblockerchunkscompatible(blocker1, blocker2):
     if not iscand(blocker1):
         chunks1 = get_table_chunks(blocker1)
     else:
@@ -296,6 +292,13 @@ def ischunkscompatible(blocker1, blocker2):
         return False
 
 
+def isexpredictchunkscompatible(node1, node2):
+    chunks1 = get_nchunks_of_type(node1, '_extract_feature_vecs_part')
+    chunks2 = get_nchunks_of_type(node2, '_predict_table_part')
+    if chunks1 == chunks2:
+        return True
+    else:
+        return False
 
 
 
@@ -324,12 +327,12 @@ def recurse_dep_keys(blocker, key, copy=True):
     return out
 
 
-def remove_concat_split(blocker1, blocker2, copy=True):
+def remove_concat_split_for_blockers(blocker1, blocker2, copy=True):
     if copy:
         blocker1 = deepcopy(blocker1)
         blocker2 = deepcopy(blocker2)
     # print('Inside')
-    compat = ischunkscompatible(blocker1, blocker2)
+    compat = isblockerchunkscompatible(blocker1, blocker2)
     if compat:
         concat_df1 = get_keys(blocker1, 'concat_df')[0]
         dep1 = get_dependencies(blocker1,
@@ -369,13 +372,64 @@ def remove_concat_split(blocker1, blocker2, copy=True):
             # blocker2
     return blocker1, blocker2
 
+def remove_concat_split_for_exfeatpredict(node1, node2, copy=True):
+    if copy:
+        node1 = deepcopy(node1)
+        node2 = deepcopy(node2)
+    # print('Inside')
+    compat = isexpredictchunkscompatible(node1, node2)
+    if compat:
+        concat_df1 = get_keys(node1, 'concat_df')[0]
+        dep1 = get_dependencies(node1,
+                                concat_df1)  # this will be a list of blocker outputs
+
+        concat_df2 = get_keys(node2, 'concat_df')[0]
+        dep2 = get_dependencies(node2,
+                                concat_df2)  # this will be a list of blocker outputs
+
+        node1_keys_to_remove = set()
+        node2_keys_to_remove = set()
+
+        node1_keys_to_remove.add(concat_df1)
+        for i in range(len(dep1)):
+            node2_vals = list(node2[dep2[i]])
+            old_dep = node2_vals[1]
+            node2_vals[1] = dep1[i]
+            node2[dep2[i]] = tuple(node2_vals)
+            #             print(old_dep)
+
+            t = recurse_dep_keys(node2, old_dep)
+            #             print(blocker2_keys_to_remove)
+            node2_keys_to_remove.update(t)
+
+            # clean up unnecessary stuff:
+            # node1: remove concat df
+        #         print(blocker2_keys_to_remove)
+        for key in node1_keys_to_remove:
+            del node1[key]
+        for key in node2_keys_to_remove:
+            #             print(key)
+            del node2[key]
+
+
+            #         print(blocker1_keys_to_remove)
+            #         print(blocker2_keys_to_remove)
+            # node2
+    return node1, node2
 
 def remove_concat_split_for_blocker_list(blocker_list):
     for i in range(len(blocker_list)-1):
         # print('Processing {0} and {1}'.format(i, i+1))
-        blocker_list[i], blocker_list[i+1] = remove_concat_split(blocker_list[i], blocker_list[i+1])
+        blocker_list[i], blocker_list[i+1] = remove_concat_split_for_blockers(blocker_list[i], blocker_list[i + 1])
     return blocker_list
 
+
+def remove_concat_split_for_exfeatpredict_list(node_list):
+    assert(len(node_list) == 2)
+    for i in range(len(node_list)-1):
+        # print('Processing {0} and {1}'.format(i, i+1))
+        node_list[i], node_list[i + 1] = remove_concat_split_for_exfeatpredict(node_list[i], node_list[i + 1])
+    return node_list
 
 def get_keys_ordered(dag, start, search):
     nodes = []
