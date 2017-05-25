@@ -101,7 +101,7 @@ if __name__ == "__main__":
     setuptools.setup(
         name='dmagellan',
         version='0.1.0',
-        description='Down sampling code in cython',
+        description='EM-Dask',
         long_description=LONG_DESCRIPTION,
         author='UW Magellan Team',
         author_email='uwmagellan@gmail.com',
@@ -127,6 +127,15 @@ if __name__ == "__main__":
             'Topic :: Scientific/Engineering',
             'Topic :: Utilities',
             'Topic :: Software Development :: Libraries',
+        ],
+     	install_requires=[
+            'PyPrind == 2.9.8',
+	    'py_entitymatching',
+            'py_stringsimjoin',
+            # dependencies such as py_stringmatching, joblib, pyprind
+            'cloudpickle >= 0.2.1',
+            'pyparsing >= 2.1.4',
+            'scikit-learn >= 0.18'
         ],
         packages=packages,
         ext_modules=extensions,

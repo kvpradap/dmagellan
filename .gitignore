@@ -85,5 +85,5 @@ garage/timing_test
 err
 *.csv
 *.tgz
-
+*.egg-info
 .err

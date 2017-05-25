@@ -22,7 +22,7 @@ class OverlapBlocker(object):
         self.stop_words = ['a', 'an', 'and', 'are', 'as', 'at',
                            'be', 'by', 'for', 'from',
                            'has', 'he', 'in', 'is', 'it',
-                           'its', 'on', 'that', 'the', 'to',
+                           'its', 'on', 'that', 'the', 'to', 'of',
                            'was', 'were', 'will', 'with']
 
     def _remove_stopwords(self, tokens, stopwords):
