@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 def _extract_feature_vecs_part(candset, ltable, rtable, key, fk_ltable, fk_rtable, l_key,
                                r_key, attrs_before, feature_table, attrs_after):
+    # ltable = ltable.compute()
+    # rtable = rtable.compute()
     if isinstance(candset, pd.DataFrame) and len(candset):
         ltbl = ltable.set_index(l_key, drop=False)
         rtbl = rtable.set_index(r_key, drop=False)
