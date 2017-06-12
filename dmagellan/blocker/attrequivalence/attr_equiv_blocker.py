@@ -84,20 +84,20 @@ class AttrEquivalenceBlocker(object):
         # @todo validate inputs
         # @todo need to handle missing values.
 
-        ltable_splitted = (lsplit_df)(ltable, nltable_chunks)
-        rtable_splitted = (rsplit_df)(rtable, nrtable_chunks)
+        # ltable_splitted = (lsplit_df)(ltable, nltable_chunks)
+        # rtable_splitted = (rsplit_df)(rtable, nrtable_chunks)
 
         # l_proj_attrs = (get_lattrs_to_project)(l_key, l_block_attr, l_output_attrs)
         # r_proj_attrs = (get_rattrs_to_project)(r_key, r_block_attr, r_output_attrs)
 
         # list ot accomodate results
         results = []
-        for i in xrange(nltable_chunks):
+        for i in xrange(ltable.npartitions):
             # ltbl = (lproj_df)(ltable_splitted[i], l_proj_attrs)
-            for j in xrange(nrtable_chunks):
+            for j in xrange(rtable.npartitions):
                 # rtbl = (rproj_df)(rtable_splitted[j], r_proj_attrs)
-                res = delayed(self._block_table_part)(ltable_splitted[i],
-                                                      rtable_splitted[j],
+                res = delayed(self._block_table_part)(ltable.get_partition(i),
+                                                      rtable.get_partition(j),
                                                       l_key,
                                                       r_key,
                                                       l_block_attr,
@@ -105,14 +105,14 @@ class AttrEquivalenceBlocker(object):
                                                       r_output_attrs,
                                                       l_output_prefix, r_output_prefix)
                 results.append(res)
-        candset = delayed(concat_df)(results)
-        candset = delayed(add_id)(candset)
+        # candset = delayed(concat_df)(results)
+        # candset = delayed(add_id)(candset)
 
         if compute:
             candset = exec_dag(candset, num_workers, cache_size, scheduler,
                                show_progress)
 
-        return candset
+        return results
 
     def block_candset(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                       r_key, l_block_attr, r_block_attr, nchunks=1,

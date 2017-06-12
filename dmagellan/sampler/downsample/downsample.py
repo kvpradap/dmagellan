@@ -2,7 +2,7 @@ import string
 
 import pandas as pd
 from dask import threaded, delayed
-from dmagellan.core.dsprober import DownSampleProber
+from dmagellan.sampler.downsample.dsprober import DownSampleProber
 
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 from dmagellan.utils.py_utils.utils import get_str_cols, str2bytes, sample, split_df, \
@@ -64,6 +64,27 @@ def downsample_sm(ltable, rtable, lid, rid, size, y, stopwords=[]):
 
     return sampled_tbls
 #########################
+def downsample_ddf(ltable, rtable, lid, rid, size, y, stopwords=[]):
+    ltokens = []
+    for i in range(ltable.npartitions):
+        lcat_strings = (delayed)(preprocess_table)(ltable.get_partition(i), lid)
+        tokens = (delayed)(tokenize_strings_wsp)(lcat_strings, stopwords)
+        ltokens.append(tokens)
+
+    invindex = (delayed)(build_inv_index)(ltokens)
+    rsample = delayed(sample)(rtable, size)
+    probe_rslts = []
+    for i in range(rtable.npartitions):
+        rcat_strings = (delayed)(preprocess_table)(rtable.get_partition(i), rid)
+        rtokens = (delayed)(tokenize_strings_wsp)(rcat_strings, stopwords)
+        probe_rslt = (delayed)(probe)(rtokens, invindex, y)
+        probe_rslts.append(probe_rslt)
+
+    sampled_tbls = (delayed)(postprocess)(probe_rslts, ltable, rsample)
+    return sampled_tbls
+
+
+
 
 #### dask ########### ####
 def downsample_dk(ltable, rtable, lid, rid, size, y, stopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True):

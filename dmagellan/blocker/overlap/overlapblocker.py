@@ -4,6 +4,7 @@ from functools import partial
 
 import pandas as pd
 from dask import threaded, delayed
+from dask.dataframe import from_delayed
 
 from dmagellan.blocker.blocker_utils import get_attrs_to_project, \
     get_lattrs_to_project, get_rattrs_to_project
@@ -197,8 +198,8 @@ class OverlapBlocker(object):
             tokenizer = QgramTokenizer(q_val=q_val)
 
         results = []
-        for i in xrange(nchunks):
-            result = delayed(self._block_candset_part)(cand_splitted[i], ltable, rtable,
+        for i in xrange(candset.npartitions):
+            result = delayed(self._block_candset_part)(candset.get_partition(i), ltable, rtable,
                                                        fk_ltable,
                                                        fk_rtable, l_key, r_key,
                                                        l_block_attr,
@@ -206,10 +207,11 @@ class OverlapBlocker(object):
                                                        tokenizer, overlap_size)
             results.append(result)
 
-        valid_candset = delayed(concat_df)(results)
+        # valid_candset = delayed(concat_df)(results)
         if compute:
             valid_candset = exec_dag(valid_candset, num_workers, cache_size, scheduler,
                                      show_progress)
-        return valid_candset
+        meta
+        return from_delayed(results)
 
 
