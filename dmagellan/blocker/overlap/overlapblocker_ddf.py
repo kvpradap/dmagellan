@@ -156,6 +156,8 @@ class OverlapBlocker(object):
             tokenizer = QgramTokenizer(q_val=q_val)
 
         results = []
+        assert(nltable_chunks == ltable.npartitions)
+        assert(nrtable_chunks == rtable.npartitions)
         for i in xrange(nltable_chunks):
             # ltbl = (lproj_df)(ltable_splitted[i], l_proj_attrs)
             for j in xrange(nrtable_chunks):
