@@ -21,7 +21,7 @@ B = pd.read_csv('./datasets/sample_dblp_300k.csv')
 memUsageBefore = psutil.virtual_memory().used/1e9
 ob = OverlapBlocker()
 # print("Mem. usage before reading:{0}", memUsageBefore)
-C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=4, compute=False, nltable_chunks=1, nrtable_chunks=2)
+C = ob.block_tables(A.sample(1000), B.sample(1000), 'id', 'id', 'title', 'title', overlap_size=2, compute=False, nltable_chunks=1, nrtable_chunks=2)
 
 with Profiler() as prof, CacheProfiler() as cprof, ResourceProfiler(dt=0.25) as rprof:
     D = C.compute(get=multiprocessing.get, num_workers=4)
