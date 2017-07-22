@@ -2,7 +2,7 @@ import string
 
 import pandas as pd
 from dask import threaded, delayed
-from dmagellan.core.dsprober import DownSampleProber
+from dmagellan.sampler.downsample.dsprober import DownSampleProber
 
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 from dmagellan.utils.py_utils.utils import get_str_cols, str2bytes, sample, split_df, \
