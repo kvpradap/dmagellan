@@ -17,7 +17,7 @@ print("Mem. usage before reading:{0} (GB)".format( psutil.virtual_memory().used/
 
 A = pd.read_csv('./datasets/sample_msd_100k.csv')
 B = A
-C = pd.read_csv('./datasets/msd_candset.csv')
+C = pd.read_csv('./datasets/citeseer_candset.csv')
 print("Mem. usage after reading:{0} (GB)".format(psutil.virtual_memory().used/1e9))
 feature_table = get_features_for_matching(A, B)
 memUsageBefore = psutil.virtual_memory().used/1e9

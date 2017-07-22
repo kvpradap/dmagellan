@@ -30,6 +30,7 @@ memUsageAfter = psutil.virtual_memory().used/1e9
 print('Mem.usage (after reading): {0}, Mem.usage (after blocking): {1}, diff: {2}'.format(memUsageBefore, memUsageAfter, memUsageAfter-memUsageBefore))
 print('Time. diff: {0}'.format(timeAter-timeBefore))
 
+# D.to_csv('../datasets/citeseer_candset.csv', index=False)
 
 
 
