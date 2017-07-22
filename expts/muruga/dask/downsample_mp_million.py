@@ -37,8 +37,5 @@ _= C.compute(get=multiprocessing.get)
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 
-print('Mem.usage (after reading): {0} (GB), Mem.usage (after blocking): {1} (GB), diff: {2} (GB)'.format(memUsageBefore, memUsageAfter, memUsageAfter-memUsageBefore))
+print('Mem.usage (after reading): {0} (GB), Mem.usage (after downsampling): {1} (GB), diff: {2} (GB)'.format(memUsageBefore, memUsageAfter, memUsageAfter-memUsageBefore))
 print('Time. diff: {0} (secs)'.format(timeAfter-timeBefore))
-
-
-

@@ -33,6 +33,7 @@ print('Time. diff: {0}'.format(timeAfter-timeBefore))
 D.sample(500).to_csv('citeseer_candset.csv', index=False)
 
 
+# D.to_csv('../datasets/citeseer_candset.csv', index=False)
 
 
 

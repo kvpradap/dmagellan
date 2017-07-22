@@ -20,19 +20,14 @@ B = A
 print("Mem. usage after reading:{0}".format(psutil.virtual_memory().used/1e9))
 
 C = pd.read_csv('../datasets/candset_msd.csv')
-
 feature_table = get_features_for_matching(A, B)
-
 memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
 feature_vecs = extract_feature_vecs(C, A, B, '_id', 'l_id',  'r_id', 'id', 'id', feature_table=feature_table,
         nchunks=4, compute=False)
-
 D = feature_vecs.compute(get=multiprocessing.get, num_workers=4)
-
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 
 print('Mem.usage (after reading): {0} (GB), Mem.usage (after blocking): {1} (GB), diff: {2} (GB)'.format(memUsageBefore, memUsageAfter, memUsageAfter-memUsageBefore))
 print('Time. diff: {0} (secs)'.format(timeAfter-timeBefore))
-D.to_csv('featvecs_million.csv', index=False)
