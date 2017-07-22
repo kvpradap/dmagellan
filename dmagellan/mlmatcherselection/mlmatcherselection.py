@@ -29,7 +29,7 @@ def select_matcher(matchers, x=None, y=None, table=None, exclude_attrs=None,
     x, y = _get_xy_data(x, y, table, exclude_attrs, target_attr)
     scores = []
     for m in matchers:
-        score = cross_validation(m, x, y, metric, k, random_state)
+        score = (cross_validation)(m, x, y, metric, k, random_state)
         scores.append(score)
     res = delayed(process_scores)(matchers, scores, k)
     if compute:

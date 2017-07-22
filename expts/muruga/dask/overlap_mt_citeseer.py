@@ -22,7 +22,7 @@ memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
 ob = OverlapBlocker()
 # print("Mem. usage before reading:{0}", memUsageBefore)
-C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=2, compute=False, nltable_chunks=1, nrtable_chunks=4, rem_stop_words=True)
+C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=1, compute=False, nltable_chunks=4, nrtable_chunks=4, rem_stop_words=True)
 
 D = C.compute(get=threaded.get)
 timeAfter = time.time()
