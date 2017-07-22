@@ -163,7 +163,8 @@ def concat_df(dfs):
 def add_id(df):
     # print('Inside add_id')
     if len(df):
-        df.insert(0, '_id', range(len(df)))
+        if '_id' not in df.columns:
+            df.insert(0, '_id', range(len(df)))
     return df
 
 

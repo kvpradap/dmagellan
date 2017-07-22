@@ -276,9 +276,10 @@ class RuleBasedBlocker(object):
                 c_df = join_fn(ltable, rtable, l_key, r_key, l_attr, r_attr,
                                tokenizer, float(th), comp_op, allow_empty=True,
                                allow_missing=True,
-                               l_out_prefix=l_output_prefix,
-                               r_out_prefix=r_output_prefix,
+                               l_out_prefix='l_',
+                               r_out_prefix='r_',
                                out_sim_score=False)
+                #c_df.drop('_id', axis=1)
             if candset is not None:
                 # union the candset of this conjunct with the existing candset
                 candset = pd.concat([candset, c_df]).drop_duplicates(

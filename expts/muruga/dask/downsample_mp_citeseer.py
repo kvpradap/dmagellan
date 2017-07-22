@@ -32,8 +32,8 @@ print("Mem. usage after reading:{0} (GB)".format(psutil.virtual_memory().used/1e
 
 memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
-C = downsample_dk(A, B, 'id', 'id', 100000, 1, stopwords=stopwords, compute=False, nlchunks=1, nrchunks=4)
-_,= C.compute(get=multiprocessing.get)
+C = downsample_dk(A, B, 'id', 'id', 100000, 1, stopwords=stopwords, compute=False, nlchunks= 1, nrchunks=4)
+_= C.compute(get=multiprocessing.get)
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 

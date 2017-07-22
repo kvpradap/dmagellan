@@ -70,8 +70,9 @@ def downsample_dk(ltable, rtable, lid, rid, size, y, stopwords=[], nlchunks=1, n
 
 
     ltokens = []
+    lsplitted = delayed(split_df)(ltable, nlchunks)
     for i in range(nlchunks):
-        lcat_strings = (delayed)(preprocess_table)(ltable, lid)
+        lcat_strings = (delayed)(preprocess_table)(lsplitted[i], lid)
         tokens = (delayed)(tokenize_strings_wsp)(lcat_strings, stopwords)
         ltokens.append(tokens)
 
