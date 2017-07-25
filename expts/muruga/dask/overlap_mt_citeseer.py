@@ -22,18 +22,20 @@ memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
 ob = OverlapBlocker()
 # print("Mem. usage before reading:{0}", memUsageBefore)
-C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=1, compute=False, nltable_chunks=4, nrtable_chunks=4, rem_stop_words=True)
+C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=2, compute=False, nltable_chunks=1, nrtable_chunks=4, rem_stop_words=True)
 
 D = C.compute(get=threaded.get)
+len(D)
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 
 print('Mem.usage (after reading): {0}, Mem.usage (after blocking): {1}, diff: {2}'.format(memUsageBefore, memUsageAfter, memUsageAfter-memUsageBefore))
 print('Time. diff: {0}'.format(timeAfter-timeBefore))
-D.sample(500).to_csv('citeseer_candset.csv', index=False)
+print(len(D))
+#D.sample(300000).to_csv('../datasets/citeseer_candset_300k.csv', index=False)
 
 
-# D.to_csv('../datasets/citeseer_candset.csv', index=False)
+#D.to_csv('../datasets/citeseer_candset.csv', index=False)
 
 
 
