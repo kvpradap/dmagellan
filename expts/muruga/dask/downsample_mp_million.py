@@ -19,13 +19,13 @@ datapath='../datasets'
 
 
 stopwords = get_stop_words(os.path.join(datapath, 'stopwords'))
-stopwords.extend(['and', 'in', 'the', 'my', 'me', 'to', 'you', 'i', 'andre', 'from', 'a', 'of', 'the', 'version', 'love', 'live', 'la', 'mix', 'album', 'dont'])
+#stopwords.extend(['and', 'in', 'the', 'my', 'me', 'to', 'you', 'i', 'andre', 'from', 'a', 'of', 'the', 'version', 'love', 'live', 'la', 'mix', 'album', 'dont'])
 stopwords = list(set(stopwords))
 
 
 print("Mem. usage before reading:{0} (GB)".format( psutil.virtual_memory().used/1e9))
 A = pd.read_csv('../datasets/msd.csv')
-B = A
+B =  pd.read_csv('../datasets/msd.csv')
 print("Mem. usage after reading:{0} (GB)".format(psutil.virtual_memory().used/1e9))
 
 #stopWords = list(get_stop_words())
@@ -33,7 +33,7 @@ print("Mem. usage after reading:{0} (GB)".format(psutil.virtual_memory().used/1e
 memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
 C = downsample_dk(A, B, 'id', 'id', 100000, 1, stopwords=stopwords, compute=False, nlchunks=1, nrchunks=4)
-_= C.compute(get=multiprocessing.get)
+_= C.compute(get=threaded.get)
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 
