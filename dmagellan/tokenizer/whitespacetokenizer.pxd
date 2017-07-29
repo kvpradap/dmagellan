@@ -7,6 +7,7 @@ from dmagellan.tokenizer.tokenizer cimport Tokenizer
 
 cdef extern from "string.h":
     char *strtok_r (char *inp_str, const char *delimiters, char **) nogil
+    size_t strlen   (const char *s) nogil
 cdef class WhiteSpaceTokenizer(Tokenizer):
     cdef omap[string, int] stopwords
     cdef bool return_set

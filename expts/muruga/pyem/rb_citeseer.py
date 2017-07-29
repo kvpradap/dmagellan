@@ -6,17 +6,17 @@ import py_entitymatching as em
 import logging
 logging.basicConfig(level=logging.INFO)
 print("Mem. usage before reading:{0} (GB)".format( psutil.virtual_memory().used/1e9))
-A = em.read_csv_metadata('../datasets/sample_citeseer_100k.csv', key='id')
-B = em.read_csv_metadata('../datasets/sample_dblp_100k.csv', key='id')
+A = em.read_csv_metadata('../datasets/sample_citeseer_200k.csv', key='id')
+B = em.read_csv_metadata('../datasets/sample_dblp_200k.csv', key='id')
 print("Mem. usage after reading:{0} (GB)".format(psutil.virtual_memory().used/1e9))
 
 rb = em.RuleBasedBlocker()
-block_f = em.get_features_for_blocking(A, B, validate_inferred_attr_types=False)
+block_f = em.get_features_for_blocking(A, B)
 _ = rb.add_rule(['title_title_jac_qgm_3_qgm_3(ltuple, rtuple) < 0.8'], block_f)
 
 memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
-C = rb.block_tables(A, B,   n_jobs=-1, show_progress=True)
+C = rb.block_tables(A, B,   n_jobs=-1, show_progress=True, l_output_attrs=['title'], r_output_attrs=['title'])
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 

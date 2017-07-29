@@ -6,6 +6,8 @@ import py_entitymatching as em
 import logging
 logging.basicConfig(level=logging.INFO)
 print("Mem. usage before reading:{0} (GB)".format( psutil.virtual_memory().used/1e9))
+#A = em.read_csv_metadata('../datasets/sample_msd_200k.csv', key='id')
+#B = em.read_csv_metadata('../datasets/sample_msd_200k.csv', key='id')
 A = em.read_csv_metadata('../datasets/sample_msd_100k.csv', key='id')
 B = em.read_csv_metadata('../datasets/sample_msd_100k.csv', key='id')
 print("Mem. usage after reading:{0} (GB)".format(psutil.virtual_memory().used/1e9))

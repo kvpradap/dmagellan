@@ -19,7 +19,8 @@ A = pd.read_csv('../datasets/sample_msd_100k.csv')
 B = A
 print("Mem. usage after reading:{0}".format(psutil.virtual_memory().used/1e9))
 
-C = pd.read_csv('../datasets/candset_msd_300k.csv')
+#C = pd.read_csv('../datasets/candset_msd_300k.csv')
+C = pd.read_csv('../datasets/candset_msd_overlap_blocker_th2.csv')
 feature_table = get_features_for_matching(A, B)
 memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()

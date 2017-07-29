@@ -20,8 +20,9 @@ import py_entitymatching as em
 A = em.load_dataset('person_table_A')
 concat_strings = preprocess_table(A)
 tokens = tokenize_strings(concat_strings, ['san'])
-print(tokens.get_index(0))
-invindex = build_inv_index(tokens)
-print(invindex.get_values('franciscoo'))
-import sys
-print(sys.getsizeof(concat_strings))
+#print(tokens.get_index(0))
+#invindex = build_inv_index(tokens)
+#print(invindex.get_values('franciscoo'))
+#import sys
+#print(sys.getsizeof(concat_strings))
+print(tokens)

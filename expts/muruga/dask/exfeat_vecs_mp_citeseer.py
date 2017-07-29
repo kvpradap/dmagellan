@@ -17,9 +17,12 @@ pbar.register()
 print("Mem. usage before reading:{0}".format( psutil.virtual_memory().used/1e9))
 A = pd.read_csv('../datasets/sample_citeseer_100k.csv')
 B = pd.read_csv('../datasets/sample_dblp_100k.csv')
+#A = pd.read_csv('../datasets/')
+#B = pd.read_csv('../datasets/sample_dblp_100k.csv')
 print("Mem. usage after reading:{0}".format(psutil.virtual_memory().used/1e9))
 
-C = pd.read_csv('../datasets/citeseer_candset_300k.csv')
+#C = pd.read_csv('../datasets/citeseer_candset_300k.csv')
+C = pd.read_csv('../datasets/citeseer_candset_ovth_2.csv')
 
 feature_table = get_features_for_matching(A, B)
 

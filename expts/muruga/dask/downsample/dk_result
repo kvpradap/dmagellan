@@ -1,0 +1,43 @@
+pradap@trinity dk $ python downsample_mt_
+downsample_mt_citeseer_2.py      downsample_mt_citeseer_fixed.py  downsample_mt_million_5.py
+downsample_mt_citeseer_5.py      downsample_mt_million_2.py       downsample_mt_million_fixed.py
+pradap@trinity dk $ python downsample_mt_million_5.py 
+Mem. usage before reading:3.287560192 (GB)
+Mem. usage after reading:3.699335168 (GB)
+[########################################] | 100% Completed |  5min 13.3s
+Mem.usage (after reading): 3.699335168 (GB), Mem.usage (after downsampling): 4.503597056 (GB), diff: 0.804261888 (GB)
+Time. diff: 313.333959103 (secs)
+pradap@trinity dk $ python downsample_mt_million_fixed.py 
+Mem. usage before reading:3.291537408 (GB)
+Mem. usage after reading:3.703341056 (GB)
+[########################################] | 100% Completed |  3min 33.2s
+Mem.usage (after reading): 3.703341056 (GB), Mem.usage (after downsampling): 4.520574976 (GB), diff: 0.81723392 (GB)
+Time. diff: 213.21351099 (secs)
+pradap@trinity dk $ python downsample_mt_million_2.py 
+Mem. usage before reading:3.295174656 (GB)
+Mem. usage after reading:3.70704384 (GB)
+[########################################] | 100% Completed |  2min 34.0s
+Mem.usage (after reading): 3.70704384 (GB), Mem.usage (after downsampling): 4.521824256 (GB), diff: 0.814780416 (GB)
+Time. diff: 153.964198828 (secs)
+pradap@trinity dk $ python downsample_mt_citeseer_2.py 
+Mem. usage before reading:3.293323264 (GB)
+sys:1: DtypeWarning: Columns (3,4) have mixed types. Specify dtype option on import or set low_memory=False.
+Mem. usage after reading:4.513308672 (GB)
+[########################################] | 100% Completed |  8min 19.4s
+Mem.usage (after reading): 4.513308672 (GB), Mem.usage (after downsampling): 6.576898048 (GB), diff: 2.063589376 (GB)
+Time. diff: 499.429718018 (secs)
+pradap@trinity dk $ python downsample_mt_citeseer_5.py 
+Mem. usage before reading:3.29785344 (GB)
+sys:1: DtypeWarning: Columns (3,4) have mixed types. Specify dtype option on import or set low_memory=False.
+Mem. usage after reading:4.552224768 (GB)
+[########################################] | 100% Completed | 15min  2.3s
+Mem.usage (after reading): 4.552224768 (GB), Mem.usage (after downsampling): 3.951030272 (GB), diff: -0.601194496 (GB)
+Time. diff: 902.347002029 (secs)
+pradap@trinity dk $ python downsample_mt_citeseer_fixed.py 
+Mem. usage before reading:0.547418112 (GB)
+sys:1: DtypeWarning: Columns (3,4) have mixed types. Specify dtype option on import or set low_memory=False.
+Mem. usage after reading:1.76932864 (GB)
+[########################################] | 100% Completed | 16min 35.8s
+Mem.usage (after reading): 1.76932864 (GB), Mem.usage (after downsampling): 3.92429568 (GB), diff: 2.15496704 (GB)
+Time. diff: 995.762556076 (secs)
+

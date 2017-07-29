@@ -16,8 +16,11 @@ pbar = ProgressBar()
 pbar.register()
 
 print("Mem. usage before reading:{0}".format( psutil.virtual_memory().used/1e9))
+#A = pd.read_csv('../datasets/sample_citeseer_200k.csv')
+#B = pd.read_csv('../datasets/sample_dblp_200k.csv')
 A = pd.read_csv('../datasets/sample_citeseer_100k.csv')
 B = pd.read_csv('../datasets/sample_dblp_100k.csv')
+print(len(A), len(B))
 
 block_f = get_features_for_blocking(A, B)
 rb = RuleBasedBlocker()
@@ -27,9 +30,9 @@ rb.set_table_attrs(['title'], ['title'])
 memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
 print("Mem. usage before reading:{0}".format(memUsageBefore))
-C = rb.block_tables(A, B, 'id', 'id', nltable_chunks=2, nrtable_chunks=2, l_output_attrs=['title'], r_output_attrs=['title'], compute=False)
+C = rb.block_tables(A, B, 'id', 'id', nltable_chunks=2, nrtable_chunks=2, l_output_attrs=['title'], r_output_attrs=['title'], compute=False, show_progress=False)
 
-_ = C.compute(get=multiprocessing.get)
+_ = C.compute(get=threaded.get)
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 

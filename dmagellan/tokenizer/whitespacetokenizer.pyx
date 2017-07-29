@@ -11,7 +11,8 @@ cdef class WhiteSpaceTokenizer(Tokenizer):
         cdef vector[string] otokens
         cdef string token
         for token in itokens:
-            if (self.stopwords.find(token) == self.stopwords.end()):
+            if token.length() > 1 and (self.stopwords.find(token) == self.stopwords.end()):
+            #if (self.stopwords.find(token) == self.stopwords.end()):
                 otokens.push_back(token)
         return otokens
 
