@@ -28,44 +28,28 @@ class BlackBoxBlocker(object):
     def set_rtable_attrs(self, rtable_attrs):
         self.rtable_attrs = rtable_attrs
 
-    def _block_tables_part(self, ltable, rtable, l_key, r_key, l_output_attrs,
-                           r_output_attrs, l_output_prefix, r_output_prefix):
 
-        l_proj_attrs = (get_lattrs_to_project)(l_key, l_output_attrs)
-        r_proj_attrs = (get_rattrs_to_project)(r_key, r_output_attrs)
-
-
-        l_key_vals = ltable[l_key].values
-        r_key_vals = rtable[r_key].values
+    def _block_tables_part(self, ltable, rtable, l_key, r_key,
+                           l_output_attrs, r_output_attrs,
+                           l_output_prefix, r_output_prefix):
+        l_proj_attrs = (get_lattrs_to_project)(l_key,  self.ltable_attrs, l_output_attrs)
+        r_proj_attrs = (get_rattrs_to_project)(r_key,  self.rtable_attrs, r_output_attrs)
 
         ltbl = (lproj_df)(ltable, l_proj_attrs)
         rtbl = (rproj_df)(rtable, r_proj_attrs)
 
-        # if self.ltable_attrs != None:
-        #     ltbl = ltable[self.ltable_attrs]
-        # else:
-        #     ltbl = ltable
-        #
-        # if self.rtable_attrs != None:
-        #     rtbl = rtable[self.rtable_attrs]
-        # else:
-        #     rtbl = rtable
+        ltbl.set_index(l_key, inplace=True, drop=False)
+        rtbl.set_index(r_key, inplace=True, drop=False)
 
-        l_dict = {}
-        r_dict = {}
-
-        for i in xrange(len(ltbl)):
-            l_dict[l_key_vals[i]] = ltbl.iloc[i]
-
-        for i in xrange(len(rtbl)):
-            r_dict[r_key_vals[i]] = rtbl.iloc[i]
+        l_dict = ltbl.T.to_dict()
+        r_dict = rtbl.T.to_dict()
 
         valid_pairs = []
-        for l_id in l_dict:
-            l_tuple = l_dict[l_id]
-            for r_id in r_dict:
-                r_tuple = r_dict[r_id]
-                res = self.black_box_function(l_tuple, r_tuple)
+        for l_id in l_dict.keys():
+            ltuple = l_dict[l_id]
+            for r_id in r_dict.keys():
+                rtuple = r_dict[r_id]
+                res = self.black_box_function(ltuple, rtuple)
                 if not res:
                     valid_pairs.append([l_id, r_id])
         fk_ltable, fk_rtable = l_output_prefix + l_key, r_output_prefix + r_key
@@ -73,10 +57,113 @@ class BlackBoxBlocker(object):
         candset = add_attributes(candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                                  r_key, l_output_attrs, r_output_attrs,
                                  l_output_prefix, r_output_prefix)
-        if not isinstance(candset, pd.DataFrame):
-            print('Returning {0}'.format(candset))
+        # if not isinstance(candset, pd.DataFrame):
+        #     print('Returning {0}'.format(candset))
 
         return candset
+
+
+
+
+    # def _block_tables_part(self, ltable, rtable, l_key, r_key, l_output_attrs,
+    #                        r_output_attrs, l_output_prefix, r_output_prefix):
+    #
+    #     l_proj_attrs = (get_lattrs_to_project)(l_key,  self.ltable_attrs, l_output_attrs)
+    #     r_proj_attrs = (get_rattrs_to_project)(r_key,  self.rtable_attrs, r_output_attrs)
+    #     print(l_proj_attrs)
+    #     print(r_proj_attrs)
+    #
+    #
+    #     l_key_vals = ltable[l_key].values
+    #     r_key_vals = rtable[r_key].values
+    #
+    #     ltbl = (lproj_df)(ltable, l_proj_attrs)
+    #     rtbl = (rproj_df)(rtable, r_proj_attrs)
+    #
+    #     # if self.ltable_attrs != None:
+    #     #     ltbl = ltable[self.ltable_attrs]
+    #     # else:
+    #     #     ltbl = ltable
+    #     #
+    #     # if self.rtable_attrs != None:
+    #     #     rtbl = rtable[self.rtable_attrs]
+    #     # else:
+    #     #     rtbl = rtable
+    #
+    #     l_dict = {}
+    #     r_dict = {}
+    #
+    #     for i in xrange(len(ltbl)):
+    #         l_dict[l_key_vals[i]] = ltbl.iloc[i]
+    #
+    #     for i in xrange(len(rtbl)):
+    #         r_dict[r_key_vals[i]] = rtbl.iloc[i]
+    #
+    #     valid_pairs = []
+    #     for l_id in l_dict:
+    #         l_tuple = l_dict[l_id]
+    #         for r_id in r_dict:
+    #             r_tuple = r_dict[r_id]
+    #             res = self.black_box_function(l_tuple, r_tuple)
+    #             if not res:
+    #                 valid_pairs.append([l_id, r_id])
+    #     fk_ltable, fk_rtable = l_output_prefix + l_key, r_output_prefix + r_key
+    #     candset = pd.DataFrame(valid_pairs, columns=[fk_ltable, fk_rtable])
+    #     candset = add_attributes(candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
+    #                              r_key, l_output_attrs, r_output_attrs,
+    #                              l_output_prefix, r_output_prefix)
+    #     if not isinstance(candset, pd.DataFrame):
+    #         print('Returning {0}'.format(candset))
+    #
+    #     return candset
+
+    # def _block_candset_split(c_df, l_df, r_df, l_key, r_key, fk_ltable, fk_rtable,
+    #                      black_box_function_pkl, show_progress):
+    #
+    #     # initialize the progress bar
+    #     if show_progress:
+    #         bar = pyprind.ProgBar(len(c_df))
+    #
+    #     # create lookup dictionaries for faster processing
+    #     l_dict = {}
+    #     r_dict = {}
+    #
+    #     # list to keep track of valid ids
+    #     valid = []
+    #
+    #     # find positions of the ID attributes of the two tables in the candset
+    #     l_id_pos = list(c_df.columns).index(fk_ltable)
+    #     r_id_pos = list(c_df.columns).index(fk_rtable)
+    #
+    #     # unpickle the black box function
+    #     black_box_function = pickle.loads(black_box_function_pkl)
+    #
+    #     # iterate candidate set
+    #     for row in c_df.itertuples(index=False):
+    #         # # update progress bar
+    #         if show_progress:
+    #             bar.update()
+    #
+    #         # # get ltuple, try dictionary first, then dataframe
+    #         row_lkey = row[l_id_pos]
+    #         if row_lkey not in l_dict:
+    #             l_dict[row_lkey] = l_df.ix[row_lkey]
+    #         ltuple = l_dict[row_lkey]
+    #
+    #         # # get rtuple, try dictionary first, then dataframe
+    #         row_rkey = row[r_id_pos]
+    #         if row_rkey not in r_dict:
+    #             r_dict[row_rkey] = r_df.ix[row_rkey]
+    #         rtuple = r_dict[row_rkey]
+    #
+    #         # # apply the black box function to the tuple pair
+    #         res = black_box_function(ltuple, rtuple)
+    #         if res != True:
+    #             valid.append(True)
+    #         else:
+    #             valid.append(False)
+    #
+    #     return valid
 
     def _block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key,
                             r_key):
