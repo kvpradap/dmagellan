@@ -16,8 +16,8 @@ pbar.register()
 print("Mem. usage before reading:{0}".format( psutil.virtual_memory().used/1e9))
 #A = pd.read_csv('../datasets/sample_citeseer_200k.csv')
 #B = pd.read_csv('../datasets/sample_dblp_200k.csv')
-A = pd.read_csv('../datasets/sample_citeseer_100.csv')
-B = pd.read_csv('../datasets/sample_dblp_100.csv')
+A = pd.read_csv('../datasets/movies.csv')
+B = pd.read_csv('../datasets/songs.csv')
 print(len(A), len(B))
 print("Mem. usage after reading:{0}".format(psutil.virtual_memory().used/1e9))
 
@@ -25,10 +25,11 @@ memUsageBefore = psutil.virtual_memory().used/1e9
 timeBefore = time.time()
 ob = OverlapBlocker()
 # print("Mem. usage before reading:{0}", memUsageBefore)
-C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=2, compute=False, nltable_chunks=1, nrtable_chunks=4, rem_stop_words=True, l_output_attrs=['title'], r_output_attrs=['title'])
+C = ob.block_tables(A, B, 'id', 'id', 'title', 'title', overlap_size=4, compute=False, nltable_chunks=1, nrtable_chunks=4, rem_stop_words=False, l_output_attrs=['title'],
+                    r_output_attrs=['title'])
 
-D = C.compute(get=threaded.get)
-len(D)
+# D = C.compute(get=threaded.get)
+# len(D)
 timeAfter = time.time()
 memUsageAfter = psutil.virtual_memory().used/1e9
 
@@ -38,7 +39,7 @@ print(len(D))
 #D.sample(300000).to_csv('../datasets/citeseer_candset_300k.csv', index=False)
 
 
-D.to_csv('./mur_candset_dask.csv', index=False)
+# D.to_csv('./mur_candset_dask.csv', index=False)
 
 
 

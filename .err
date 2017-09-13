@@ -1,11 +1,263 @@
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-dmagellan/utils/cy_utils/tokencontainer.cpp: In function ‘void _ZL21__Pyx_WriteUnraisablePKciiS0_ii.clone.1(const char*, int)’:
-dmagellan/utils/cy_utils/tokencontainer.cpp:3274: warning: ‘state’ may be used uninitialized in this function
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-cc1plus: warning: command line option "-Wstrict-prototypes" is valid for Ada/C/ObjC but not for C++
-dmagellan/blocker/overlap/overlapprober.cpp:1122: warning: ‘bool __pyx_f_9dmagellan_7blocker_7overlap_13overlapprober_comp(std::pair<int, int>, std::pair<int, int>)’ defined but not used
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:4960:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:4960:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:6654:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:6654:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:8696:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:8696:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:10112:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccoOtEdS.s:10112:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:6551:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:6551:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:7751:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:7751:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:8466:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:8466:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:11316:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:11316:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:13570:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:13570:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:17198:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:17198:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:18822:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:18822:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:19803:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmMKb2B.s:19803:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:4810:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:4810:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:6072:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:6072:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:7596:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:7596:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:10236:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:10236:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:11306:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:11306:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:12590:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:12590:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:13446:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:13446:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:16942:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cczbAtP9.s:16942:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:2748:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:2748:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:3834:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:3834:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:4864:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:4864:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:5508:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:5508:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:6489:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:6489:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:7462:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:7462:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:11254:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:11254:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:13114:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:13114:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:14353:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccTinWGL.s:14353:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:4555:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:4555:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:5947:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:5947:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:6977:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:6977:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:9673:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//cc6fcfTS.s:9673:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:6627:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:6627:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:8930:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:8930:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:9960:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:9960:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:14636:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:14636:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:16771:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:16771:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:21832:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccmyX0NV.s:21832:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+cc1plus: warning: command line option ‘-Wstrict-prototypes’ is valid for C/ObjC but not for C++ [enabled by default]
+dmagellan/blocker/overlap/overlapprober.cpp:1122:13: warning: ‘bool __pyx_f_9dmagellan_7blocker_7overlap_13overlapprober_comp(std::pair<int, int>, std::pair<int, int>)’ defined but not used [-Wunused-function]
+ static bool __pyx_f_9dmagellan_7blocker_7overlap_13overlapprober_comp(std::pair<int,int>  const __pyx_v_l, std::pair<int,int>  const __pyx_v_r) {
+             ^
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccawHc9B.s:4062:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccawHc9B.s:4062:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccawHc9B.s:5092:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccawHc9B.s:5092:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccawHc9B.s:9188:11: warning: section "__textcoal_nt" is deprecated
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
+/var/folders/y9/3nvjc_5j321gxs9bx6qdnh6r0000gn/T//ccawHc9B.s:9188:11: note: change section name to "__text"
+        .section __TEXT,__textcoal_nt,coalesced,pure_instructions
+                 ^      ~~~~~~~~~~~~~
