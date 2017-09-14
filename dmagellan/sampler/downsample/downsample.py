@@ -6,7 +6,7 @@ from dmagellan.sampler.downsample.dsprober import DownSampleProber
 
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 from dmagellan.utils.py_utils.utils import get_str_cols, str2bytes, sample, split_df, \
-    tokenize_strings_wsp, build_inv_index
+    tokenize_strings_wsp, build_inv_index, get_stopwords_for_downsample
 
 
 #### helper functions ####
@@ -69,6 +69,10 @@ def downsample_sm(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[
 def downsample_dk(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True):
 
 
+    if not lstopwords:
+        lstopwords = delayed(get_stopwords_for_downsample)(ltable)
+    if not rstopwords:
+        rstopwords = delayed(get_stopwords_for_downsample)(rtable)
     ltokens = []
     lsplitted = delayed(split_df)(ltable, nlchunks)
     for i in range(nlchunks):

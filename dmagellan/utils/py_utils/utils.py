@@ -16,7 +16,7 @@ from dmagellan.utils.cy_utils.invertedindex import InvertedIndex
 from dmagellan.utils.cy_utils.stringcontainer import StringContainer
 from dmagellan.utils.cy_utils.tokencontainer import TokenContainer
 logger = logging.getLogger(__name__)
-
+from collections import Counter
 def get_proj_cols(idcol, attr, out):
     ocols = [idcol, attr]
     if out != None:
@@ -243,3 +243,29 @@ def get_ts():
     t = int(round(time.time() * 1e10))
     # Return the random string.
     return str(t)[::-1]
+
+
+def get_stopwords_for_downsample(dataframe, idcol):
+    stopwords = ['a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has',
+                 'he', 'in', 'is', 'it', 'its', 'on', 'that', 'the', 'to', 'of', 'was',
+                 'were', 'will', 'with']
+    strcols = list(get_str_cols(dataframe))
+    strcols.append(idcol)
+    projdf = dataframe[strcols]
+    c = Counter()
+    for row in projdf.itertuples():
+        colvalues = row[1:-1]
+        uid = row[-1]
+        strings = [colvalue.strip() for colvalue in colvalues if not pd.isnull(colvalue)]
+        concat_row = str2bytes(' '.join(strings).lower())
+        concat_row = concat_row.translate(None, string.punctuation)
+        c.update(concat_row.split())
+
+    y = pd.DataFrame(c.items(), columns=['word', 'frequency'])
+    y['perc'] = y['frequency'] * 100.0 / len(x)
+    xx = list(y[y.word.str.len() == 1].word.values) + list(y[y['perc'] > 5].word.values)
+    stopwords = stopwords+xx
+    stopwords = list(set(stopwords))
+    return stopwords
+
+
