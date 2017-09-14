@@ -70,9 +70,9 @@ def downsample_dk(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[
 
 
     if not lstopwords:
-        lstopwords = delayed(get_stopwords_for_downsample)(ltable)
+        lstopwords = delayed(get_stopwords_for_downsample)(ltable, lid)
     if not rstopwords:
-        rstopwords = delayed(get_stopwords_for_downsample)(rtable)
+        rstopwords = delayed(get_stopwords_for_downsample)(rtable, rid)
     ltokens = []
     lsplitted = delayed(split_df)(ltable, nlchunks)
     for i in range(nlchunks):

@@ -262,7 +262,7 @@ def get_stopwords_for_downsample(dataframe, idcol):
         c.update(concat_row.split())
 
     y = pd.DataFrame(c.items(), columns=['word', 'frequency'])
-    y['perc'] = y['frequency'] * 100.0 / len(x)
+    y['perc'] = y['frequency'] * 100.0 / len(c)
     xx = list(y[y.word.str.len() == 1].word.values) + list(y[y['perc'] > 5].word.values)
     stopwords = stopwords+xx
     stopwords = list(set(stopwords))
