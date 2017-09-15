@@ -217,7 +217,7 @@ class OverlapBlocker(object):
         if word_level == True:
             tokenizer = WhiteSpaceTokenizer()
         else:
-            tokenizer = QgramTokenizer(q_val=q_val)
+            tokenizer = QgramTokenizer(qval=q_val)
 
         results = []
         for i in xrange(nchunks):
