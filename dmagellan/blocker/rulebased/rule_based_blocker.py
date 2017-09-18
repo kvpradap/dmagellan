@@ -269,8 +269,8 @@ class RuleBasedBlocker(object):
                                float(th), comp_op, allow_missing=True,
                                # need to revisit allow_missing
                                out_sim_score=False,
-                               l_out_prefix=l_output_prefix,
-                               r_out_prefix=r_output_prefix,
+                               l_out_prefix='l_',
+                               r_out_prefix='r_',
                                show_progress=False, tokenizer=tokenizer)
             else:
                 c_df = join_fn(ltable, rtable, l_key, r_key, l_attr, r_attr,

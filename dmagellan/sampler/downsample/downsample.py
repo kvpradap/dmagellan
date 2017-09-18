@@ -39,7 +39,7 @@ def postprocess(result_list, ltable, rtable):
         rids.update(result.get_rids())
     lids = sorted(lids)
     rids = sorted(rids)
-    return (ltable.loc[lids], rtable.loc[rids])
+    return (ltable.iloc[lids], rtable.iloc[rids])
     # return (lids, rids)
 #########################
 
