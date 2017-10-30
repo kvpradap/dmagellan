@@ -45,9 +45,11 @@ class BlackBoxBlocker(object):
         r_dict = rtbl.T.to_dict()
 
         valid_pairs = []
-        for l_id in l_dict.keys():
+        l_keys = l_dict.keys()
+        r_keys = r_dict.keys()
+        for l_id in l_keys:
             ltuple = l_dict[l_id]
-            for r_id in r_dict.keys():
+            for r_id in r_keys:
                 rtuple = r_dict[r_id]
                 res = self.black_box_function(ltuple, rtuple)
                 if not res:

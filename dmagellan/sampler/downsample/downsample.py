@@ -39,7 +39,7 @@ def postprocess(result_list, ltable, rtable):
         rids.update(result.get_rids())
     lids = sorted(lids)
     rids = sorted(rids)
-    return (ltable.iloc[lids], rtable.iloc[rids])
+    return (ltable.loc[lids], rtable.loc[rids])
     # return (lids, rids)
 #########################
 
@@ -66,7 +66,7 @@ def downsample_sm(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[
 #########################
 
 #### dask ########### ####
-def downsample_dk(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True):
+def downsample_dk(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[], nlchunks=1, nrchunks=1, scheduler=threaded.get, compute=True, seed=0):
 
 
     if not lstopwords:
@@ -87,7 +87,7 @@ def downsample_dk(ltable, rtable, lid, rid, size, y, lstopwords=[], rstopwords=[
 
     #rsplitted = np.array_split(rsample, nchunks)
 
-    rsample = delayed(sample)(rtable, size)
+    rsample = delayed(sample)(rtable, size, seed=seed)
     rsplitted = delayed(split_df)(rsample, nrchunks)
     probe_rslts = []
     for i in range(nrchunks):

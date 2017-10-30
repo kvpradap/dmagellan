@@ -80,9 +80,11 @@ def build_inv_index(objtc):
     return inv_obj
 
 
-def sample(df, size):
-    return df.head(size)
-    # return df.sample(size, replace=False)
+def sample(df, size, seed=0):
+    #return df.head(size)
+    s = df.sample(size, replace=False, random_state=seed)
+    #s['id'] = list(range(len(s)))
+    return s
 
 
 def split_df(df, nchunks):

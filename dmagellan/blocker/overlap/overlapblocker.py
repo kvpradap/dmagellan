@@ -139,6 +139,10 @@ class OverlapBlocker(object):
             return valid_candset
         else:
             candset
+    #def block_candset_part(self, candset, ltable, rtable, fk_ltable, fk_rtable, l_key, 
+     #                       r_key, l_block_attr, r_block_attr, rem_stop_words, tokenizer,
+      #                      threshold):
+
 
     def block_tables(self, ltable, rtable, l_key, r_key, l_block_attr,
                      r_block_attr, rem_stop_words=False, q_val=None, word_level=True,
